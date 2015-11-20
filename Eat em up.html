@@ -1,0 +1,309 @@
+
+<!DOCTYPE html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+<title>Eat em up!</title>
+<script LANGUAGE="JavaScript1.1" type="text/javascript1.1">
+
+
+var score = 0;
+var dealt = false;
+var hand = new Array(6);
+var held = new Array(6);
+var deck = new Array(53);
+
+var names = ["0 Apple Bacon Pie", 6,"1 Bacon Gingerbread", 8,"2 Bacon Ice Cream Pie", 6,"3 Bitter Sport Cereal", 4,
+			"4 Cake Pops", 2,"5 Candy Cane", 1,"6 Chocolate Bacon Donut", 6,"7 Chocolate Bar", 2,"8 Chocolate Caramel Apple", 3,
+			"9 Chocolate Fudge", 2,"10 Chocolate Gingerbread House", 10,"11 Chocolate Ice Cream", 2,"12 Chocolate Meatballs", 4,"13 Chocolate Mint", 3,
+			"14 Chocolate Moose", 5,"15 Chocolate Pretzel", 3,"16 Crab Claw Pie", 5,"17 Cream Puff", 2,"18 Cronuts", 3,
+			"19 Donut", 2,"20 Gingerbread Man", 2,"21 Gumdrop", 1,"22 Haggin Schitnel Surprise", 12,"23 Hamburger", 3,
+			"24 Honey Glazed Ham", 4,"25 Honey Glazed Lamb Chop", 4,"26 Hot Fudge Crust Pizza", 6,"27 Hotdog", 2,"28 Lamb Chop Mint Jelly", 4,
+			"29 Licorice", 1,"30 Lollipop", 2,"31 Macaron", 2,"32 Meal Cereal", 4,"33 Meat Pie", 5,
+			"34 Pancake Apple", 6,"35 Pumpkin Pie", 3,"36 Puppy Chow", 4,"37 Swirl Cake", 5,"38 Turkey Leg", 2]
+
+
+
+function Deal() {
+// fill the deck (in order, for now)
+
+
+CreateDeck()
+// shuffle the deck
+   var n = Math.floor(400 * Math.random() + 500);
+   for (i=1; i<n; i++) {
+      card1 = Math.floor(38*Math.random() + 1);
+      card2 = Math.floor(38*Math.random() + 1);
+      temp = deck[card2];
+      deck[card2] = deck[card1];
+      deck[card1] = temp;
+   }
+// Deal and Display cards
+   for (i=16; i<21; i++) {
+      hand[i] = deck[i];
+     // document.images[i].src = hand[i].fname();
+     document.images[i].src = hand[i].fname();
+     // held[i] = false;
+      var x = hand[i].fname();
+  	  document.getElementById("demo").innerHTML = x;
+     }
+   dealt = true;
+
+   document.form1.total.value = score;
+  // document.images[11].src="draw.gif";
+	for (i=1; i<20; i++) {
+	  document.images[i].src = hand[i].fname();
+	}
+
+}
+
+function CreateDeck(){
+	x = 0;// to index the names array
+	for (i= 0; i<38; i++) {
+	   deck[i] = new Card(names[x], names[x + 1], "food");
+
+	   x+= 2; //new item every 2 elements
+	}
+	
+}
+
+//Draw new cards
+function Draw() {
+   var curcard = 6;
+   for (i=1; i<6; i++) {
+      if (!held[i]) {
+      hand[i] = deck[curcard++];
+      document.images[i].src = hand[i].fname();
+      }
+   }
+   dealt = false;
+   document.images[11].src="deal.gif";
+   score += Addscore();
+   document.form1.total.value = score;
+}
+
+// Make a filename for an image, given Card object
+function fname() {
+   return "Card Images/" + this.cardName + ".jpg";
+}
+// Constructor for Card objects
+function Card(cardName, weight, cardType) {
+   this.cardName = cardName;
+   this.weight = weight;
+   this.cardType = cardType;
+   this.fname = fname;
+}
+// Numeric sort function
+function Numsort(a,b) { return a - b; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+</head>
+<body>
+	<div class="blended_grid">
+
+				<table class = "CPU_Three">
+				<tr>
+				  <td> <img border=0 src="Card Images\63 BackCard.jpg" height=136 width=106>
+				  <td> <img border=0 src="Card Images\63 BackCard.jpg"height=136 width=106>
+				  <td> <img border=0 src="Card Images\63 BackCard.jpg" height=136 width=106>
+				  <td> <img border=0 src="Card Images\63 BackCard.jpg"height=136 width=106>
+				  <td> <img border=0 src="Card Images\63 BackCard.jpg" height=136 width=106>
+				  <td> </td>
+				</tr>
+
+				</table>
+
+		<form NAME="form1">
+
+				<table class = "CPU_One">
+				<tr>
+				 <td> <img border=0 src="Card Images\64 BackCard.jpg" height=136 width=106 class="rotate90">
+				</tr>
+				  <td> <img border=0 src="Card Images\64 BackCard.jpg" height=136 width=106 class="rotate90">
+				 </tr>
+				 <tr>
+				  <td> <img border=0 src="Card Images\64 BackCard.jpg" height=136 width=106 class="rotate90">
+				</tr>
+				<tr>
+				 <td> <img border=0 src="Card Images\64 BackCard.jpg" height=136 width=106 class="rotate90">
+				 </tr>
+				 <tr>
+				  <td> <img border=0 src="Card Images\64 BackCard.jpg" height=136 width=106 class="rotate90">
+				</tr>
+
+				</table>
+		</form>
+
+
+		<table class = "deck">
+		  <tr>
+		  <td> <img border=0 src="Card Images\63 BackCard.jpg"  height=136 width=106>
+		  <td> </td>
+		  </tr>
+		</table>
+
+
+				<table class = "CPU_Two">
+				<tr>
+				  <td> <img border=0 src="Card Images\64 BackCard.jpg" height=136 width=106 class="rotate90">
+				</tr>
+				<tr>
+				  <td> <img border=0 src="Card Images\64 BackCard.jpg" height=136 width=106 class="rotate90">
+				 </tr>
+				 <tr>
+				 <td> <img border=0 src="Card Images\64 BackCard.jpg" height=136 width=106 class="rotate90">
+				</tr>
+				<tr>
+				 <td> <img border=0 src="Card Images\64 BackCard.jpg" height=136 width=106 class="rotate90">
+				 </tr>
+				 <tr>
+				  <td> <img border=0 src="Card Images\64 BackCard.jpg" height=136 width=106 class="rotate90">
+				</tr>
+
+				<p id="demo"></p>
+				</table>
+
+
+				<form NAME="form1">
+
+				<table class = "player">
+				<tr>
+				  <td> <img border=0 src="Card Images\63 BackCard.jpg" >
+				  <td> <img border=0 src="Card Images\63 BackCard.jpg"height=200 width=106>
+				  <td> <img border=0 src="Card Images\63 BackCard.jpg" height=136 width=106>
+				  <td> <img border=0 src="Card Images\63 BackCard.jpg"height=136 width=106>
+				  <td> <img border=0 src="Card Images\63 BackCard.jpg" height=136 width=106>
+				  <td> </td>
+				</tr>
+
+				<tr>
+				  <td> <B>Weight<BR>Score:</B>
+				       <input TYPE="TEXT" SIZE=6 NAME="total" VALUE="100"></td>
+				  <td colspan=2> <B>Current Hand:</B>
+
+				  <td>
+				  <td> <a href="#" onClick="Deal()">
+				       <img border=0 src="" height=50 width=106></a>
+				</tr>
+				</table>
+				</form>
+	</div>
+</body>
+
+ <style type="text/css">
+		 *{
+		padding : 0;
+		margin : 0;
+		border : 0;
+		}
+		body{
+		background-image : url(' bi-background-cubes.png ');
+		background-attachment : fixed;
+		background-size : 100% auto;
+		}
+		img{
+		height: 150px;
+		width: 115px;
+		}
+		.blended_grid{
+		display : block;
+		width : 1000px;
+		overflow : auto;
+		margin : 50px auto 0 auto;
+		}
+		.CPU_Three{
+		background-color : red;
+		float : left;
+		clear : none;
+		height : 0px;
+		width : 1000px;
+		padding-right: 50px;
+
+		}
+		.CPU_One{
+		//background-color : blue;
+		float : left;
+		clear : none;
+		height : 600px;
+		width : 160px;
+		padding-right: 30px;
+		padding-bottom: 50px;
+		padding-top: 50px;
+		}
+		.deck{
+		//background-color : black;
+		float : left;
+		clear : none;
+		height : 600px;
+		width : 680px;
+		padding-right: 250px;
+		padding-bottom: 150px;
+		}
+		.CPU_Two{
+		//background-color : yellow;
+		float : left;
+		clear : none;
+		height : 600px;
+		width : 160px;
+		padding-right: 30px;
+		padding-bottom: 50px;
+		padding-top: 50px;
+		}
+		.player{
+		//background-color : green;
+		float : left;
+		clear : none;
+		height : 100px;
+		width : 1000px;
+		padding-right: 50px;
+		}
+		.rotate90 {
+	    -webkit-transform: rotate(90deg);
+	    -moz-transform: rotate(90deg);
+	    -o-transform: rotate(90deg);
+	    -ms-transform: rotate(90deg);
+	    transform: rotate(90deg);
+		}
+		table {
+	    //border: 1px solid blue;
+	    text-align: right;
+	  	}
+
+  </style>
+</html>
+
+
