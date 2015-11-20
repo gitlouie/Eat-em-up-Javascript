@@ -9,7 +9,7 @@
 
 var score = 0;
 var dealt = false;
-var hand = new Array(6);
+var hand = new Array(5), CPU_Hand = new Array(5), CPU_Hand2 = new Array(5), CPU_Hand3 = new Array(5);
 var held = new Array(6);
 var deck = new Array(53);
 
@@ -28,34 +28,41 @@ function Deal() {
 // fill the deck (in order, for now)
 
 
-CreateDeck()
-// shuffle the deck
-   var n = Math.floor(400 * Math.random() + 500);
-   for (i=1; i<n; i++) {
-      card1 = Math.floor(38*Math.random() + 1);
-      card2 = Math.floor(38*Math.random() + 1);
-      temp = deck[card2];
-      deck[card2] = deck[card1];
-      deck[card1] = temp;
-   }
-// Deal and Display cards
-   for (i=16; i<21; i++) {
-      hand[i] = deck[i];
-     // document.images[i].src = hand[i].fname();
-     document.images[i].src = hand[i].fname();
-     // held[i] = false;
-      var x = hand[i].fname();
-  	  document.getElementById("demo").innerHTML = x;
-     }
-   dealt = true;
+	CreateDeck()
+	ShuffleDeck()
+
+	hand = InitPlayerDeck(16,0);
+	CPU_Hand = InitPlayerDeck(5,5);
+	CPU_Hand2 = InitPlayerDeck(0,10);
+	CPU_Hand3 = InitPlayerDeck(11,15);
+	
 
    document.form1.total.value = score;
   // document.images[11].src="draw.gif";
-	for (i=1; i<20; i++) {
-	  document.images[i].src = hand[i].fname();
-	}
+
+
 
 }
+
+// Player loc = location of the src file
+// i.e 16-21 = Player 1's Card images
+// Card loc = where to start looking for the cards in the shuffled deck.
+function InitPlayerDeck(playerLoc, cardLoc){
+	var testHand = new Array(5);
+
+    for (i=0; i<5; i++) {
+      testHand[i] = deck[cardLoc];
+      document.images[playerLoc].src = testHand[i].fname();
+      playerLoc++;
+      cardLoc++;
+     }
+     return testHand;
+     // held[i] = false;
+     /* var x = hand[i].fname();
+  	  document.getElementById("demo").innerHTML = x;*/
+}
+
+
 
 function CreateDeck(){
 	x = 0;// to index the names array
@@ -65,6 +72,20 @@ function CreateDeck(){
 	   x+= 2; //new item every 2 elements
 	}
 	
+}
+
+function ShuffleDeck(){
+	// shuffle the deck
+   var n = Math.floor(400 * Math.random() + 500);
+   for (i=0; i<n; i++) {
+      card1 = Math.floor(38*Math.random());
+      card2 = Math.floor(38*Math.random());
+      temp = deck[card2];
+      deck[card2] = deck[card1];
+      deck[card1] = temp;
+
+   }
+
 }
 
 //Draw new cards
@@ -171,7 +192,8 @@ function Numsort(a,b) { return a - b; }
 
 		<table class = "deck">
 		  <tr>
-		  <td> <img border=0 src="Card Images\63 BackCard.jpg"  height=136 width=106>
+		  	<td> <a href="#" onClick="Deal()">
+				       <img border=0 src="Card Images\63 BackCard.jpg"></a>
 		  <td> </td>
 		  </tr>
 		</table>
@@ -216,8 +238,7 @@ function Numsort(a,b) { return a - b; }
 				  <td colspan=2> <B>Current Hand:</B>
 
 				  <td>
-				  <td> <a href="#" onClick="Deal()">
-				       <img border=0 src="" height=50 width=106></a>
+		
 				</tr>
 				</table>
 				</form>
