@@ -9,11 +9,11 @@
 
 var score = 0;
 var dealt = false;
-var hand = new Array(5), CPU_Hand = new Array(5), CPU_Hand2 = new Array(5), CPU_Hand3 = new Array(5);
+var hand = new Array(5), CPU_Hand = new Array(5), CPU_Hand2 = new Array(5), CPU_Hand3 = new Array(6);
 var held = new Array(6);
 var deck = new Array(53);
 
-var names = ["0 Apple Bacon Pie", 6,"1 Bacon Gingerbread", 8,"2 Bacon Ice Cream Pie", 6,"3 Bitter Sport Cereal", 4,
+var foodNames = ["0 Apple Bacon Pie", 6,"1 Bacon Gingerbread", 8,"2 Bacon Ice Cream Pie", 6,"3 Bitter Sport Cereal", 4,
 			"4 Cake Pops", 2,"5 Candy Cane", 1,"6 Chocolate Bacon Donut", 6,"7 Chocolate Bar", 2,"8 Chocolate Caramel Apple", 3,
 			"9 Chocolate Fudge", 2,"10 Chocolate Gingerbread House", 10,"11 Chocolate Ice Cream", 2,"12 Chocolate Meatballs", 4,"13 Chocolate Mint", 3,
 			"14 Chocolate Moose", 5,"15 Chocolate Pretzel", 3,"16 Crab Claw Pie", 5,"17 Cream Puff", 2,"18 Cronuts", 3,
@@ -21,6 +21,16 @@ var names = ["0 Apple Bacon Pie", 6,"1 Bacon Gingerbread", 8,"2 Bacon Ice Cream 
 			"24 Honey Glazed Ham", 4,"25 Honey Glazed Lamb Chop", 4,"26 Hot Fudge Crust Pizza", 6,"27 Hotdog", 2,"28 Lamb Chop Mint Jelly", 4,
 			"29 Licorice", 1,"30 Lollipop", 2,"31 Macaron", 2,"32 Meal Cereal", 4,"33 Meat Pie", 5,
 			"34 Pancake Apple", 6,"35 Pumpkin Pie", 3,"36 Puppy Chow", 4,"37 Swirl Cake", 5,"38 Turkey Leg", 2]
+
+var potNames = ["39 Bird Stomach", -1,"40 Sour Tooth", -5,"41 North Forest Diet", -3,"42 Pebble Trails", -3,
+			    "43 Vanilla Man", -4,"44 Vegetarian", -2]
+
+var spellNames = ["45 Bone Trick", 0,"46 Boy's Best Friend", 0,"47 Diet Worm", 0,
+			"48 Father's Axe", 0,"49 For the Birds", 0,"50 Seconds", 0,"53 Step Mom", 0,"54 Truffle Shuffle", 0,
+			"55 Weigh", 0]
+
+var witchNames = ["57 Captured", 0,"58 Contra Band", 0,"59 Force Feed", 0,
+			      "60 Turning Point", 0,"61 Nothing", 0,"62 Nothing", 0]
 
 
 
@@ -31,76 +41,53 @@ function Deal() {
 	CreateDeck()
 	ShuffleDeck()
 
-	hand = InitPlayerDeck(16,0);
-	CPU_Hand = InitPlayerDeck(5,5);
-	CPU_Hand2 = InitPlayerDeck(0,10);
-	CPU_Hand3 = InitPlayerDeck(11,15);
-	
+	hand = InitPlayerDeck(17);
+	CPU_Hand = InitPlayerDeck(5);
+	CPU_Hand2 = InitPlayerDeck(0);
+	CPU_Hand3 = InitPlayerDeck(12);
 
-   document.form1.total.value = score;
-  // document.images[11].src="draw.gif";
-
-
+	dealt = true; //cards have been dealt.. now draw a new card
 
 }
 
 // Player loc = location of the src file
 // i.e 16-21 = Player 1's Card images
-// Card loc = where to start looking for the cards in the shuffled deck.
-function InitPlayerDeck(playerLoc, cardLoc){
+
+function InitPlayerDeck(playerLoc){
 	var testHand = new Array(5);
 
     for (i=0; i<5; i++) {
-      testHand[i] = deck[cardLoc];
+      testHand[i] = deck[i];
       document.images[playerLoc].src = testHand[i].fname();
       playerLoc++;
-      cardLoc++;
      }
+
+     deck.splice(0,5); //remove the cards from the deck
      return testHand;
-     // held[i] = false;
+
      /* var x = hand[i].fname();
   	  document.getElementById("demo").innerHTML = x;*/
 }
 
 
-
-function CreateDeck(){
-	x = 0;// to index the names array
-	for (i= 0; i<38; i++) {
-	   deck[i] = new Card(names[x], names[x + 1], "food");
-
-	   x+= 2; //new item every 2 elements
-	}
-	
-}
-
-function ShuffleDeck(){
-	// shuffle the deck
-   var n = Math.floor(400 * Math.random() + 500);
-   for (i=0; i<n; i++) {
-      card1 = Math.floor(38*Math.random());
-      card2 = Math.floor(38*Math.random());
-      temp = deck[card2];
-      deck[card2] = deck[card1];
-      deck[card1] = temp;
-
-   }
-
-}
-
 //Draw new cards
 function Draw() {
-   var curcard = 6;
-   for (i=1; i<6; i++) {
-      if (!held[i]) {
-      hand[i] = deck[curcard++];
-      document.images[i].src = hand[i].fname();
-      }
-   }
-   dealt = false;
-   document.images[11].src="deal.gif";
-   score += Addscore();
-   document.form1.total.value = score;
+	if (hand[5] != null) return; //makes sure you do not go over 6 cards
+
+    hand.push(deck[0]); //hand now contains the new card
+    var row = document.getElementById("playerHand").rows[0];
+    var x = row.insertCell(-1);
+
+    var img = document.createElement('img');
+    img.src = deck[0].fname();
+    img.onclick = function() { Display(5); };
+    x.appendChild(img);
+
+
+  
+    deck.splice(0, 1); //remove the card from the deck
+
+
 }
 
 // Make a filename for an image, given Card object
@@ -114,21 +101,69 @@ function Card(cardName, weight, cardType) {
    this.cardType = cardType;
    this.fname = fname;
 }
-// Numeric sort function
-function Numsort(a,b) { return a - b; }
 
 
+function DealDraw() {
+   if (dealt == true) Draw();
+   else Deal();
+}
+
+function CreateDeck(){
+
+	x = 0;// to index the names array
+	for (i = 0; i < 38; i++) {
+	   deck[i] = new Card(foodNames[x], foodNames[x + 1], "food");
+
+	   x+= 2; //new item every 2 elements
+	}
+
+	x = 0;// to index the names array
+	for (i = 38; i < 44; i++) {
+	   deck[i] = new Card(potNames[x], potNames[x + 1], "potion");
+
+	   x+= 2; //new item every 2 elements
+	}
+
+	x = 0;// to index the names array
+	for (i = 44; i < 53; i++) {
+	   deck[i] = new Card(spellNames[x], spellNames[x + 1], "spell");
+
+	   x+= 2; //new item every 2 elements
+	}
+
+	x = 0;// to index the names array
+	for (i = 53; i < 58; i++) {
+	   deck[i] = new Card(witchNames[x], witchNames[x + 1], "spell");
+
+	   x+= 2; //new item every 2 elements
+	}
+}
+function ShuffleDeck(){
+	// shuffle the deck
+   var n = Math.floor(400 * Math.random() + 500);
+   for (i=0; i<n; i++) {
+      card1 = Math.floor(53*Math.random());
+      card2 = Math.floor(53*Math.random());
+      temp = deck[card2];
+      deck[card2] = deck[card1];
+      deck[card1] = temp;
+
+   }
+
+}
 
 
+// Constructor for a Player objects
+function Player(playerName, hand, weight) {
+   this.playerName = playerName;
+   this.hand = hand;
+   this.weight = weight;
+}
 
 
-
-
-
-
-
-
-
+function Display(pos){
+	document.images[11].src = hand[pos].fname();
+}
 
 
 
@@ -158,11 +193,11 @@ function Numsort(a,b) { return a - b; }
 
 				<table class = "CPU_Three">
 				<tr>
-				  <td> <img border=0 src="Card Images\63 BackCard.jpg" height=136 width=106>
-				  <td> <img border=0 src="Card Images\63 BackCard.jpg"height=136 width=106>
-				  <td> <img border=0 src="Card Images\63 BackCard.jpg" height=136 width=106>
-				  <td> <img border=0 src="Card Images\63 BackCard.jpg"height=136 width=106>
-				  <td> <img border=0 src="Card Images\63 BackCard.jpg" height=136 width=106>
+				  <td> <img border=0 src="Card Images\63 BackCard.jpg" height=136 width=106 class="rotate180">
+				  <td> <img border=0 src="Card Images\63 BackCard.jpg"height=136 width=106 class="rotate180">
+				  <td> <img border=0 src="Card Images\63 BackCard.jpg" height=136 width=106 class="rotate180">
+				  <td> <img border=0 src="Card Images\63 BackCard.jpg"height=136 width=106 class="rotate180">
+				  <td> <img border=0 src="Card Images\63 BackCard.jpg" height=136 width=106 class="rotate180">
 				  <td> </td>
 				</tr>
 
@@ -191,9 +226,13 @@ function Numsort(a,b) { return a - b; }
 
 
 		<table class = "deck">
-		  <tr>
-		  	<td> <a href="#" onClick="Deal()">
+		  <trclass = "deck">
+		  	<td> <a href="#" onClick="DealDraw()">
 				       <img border=0 src="Card Images\63 BackCard.jpg"></a>
+		  </tr>
+		  <tr>
+			<td> <img border=0 src="" style="width:318px;height:398px;margin-top:200px;margin-right:80px;">
+		  </tr>
 		  <td> </td>
 		  </tr>
 		</table>
@@ -201,19 +240,19 @@ function Numsort(a,b) { return a - b; }
 
 				<table class = "CPU_Two">
 				<tr>
-				  <td> <img border=0 src="Card Images\64 BackCard.jpg" height=136 width=106 class="rotate90">
+				  <td> <img border=0 src="Card Images\64 BackCard.jpg" height=136 width=106 class="rotate270">
 				</tr>
 				<tr>
-				  <td> <img border=0 src="Card Images\64 BackCard.jpg" height=136 width=106 class="rotate90">
+				  <td> <img border=0 src="Card Images\64 BackCard.jpg" height=136 width=106 class="rotate270">
 				 </tr>
 				 <tr>
-				 <td> <img border=0 src="Card Images\64 BackCard.jpg" height=136 width=106 class="rotate90">
+				 <td> <img border=0 src="Card Images\64 BackCard.jpg" height=136 width=106 class="rotate270">
 				</tr>
 				<tr>
-				 <td> <img border=0 src="Card Images\64 BackCard.jpg" height=136 width=106 class="rotate90">
+				 <td> <img border=0 src="Card Images\64 BackCard.jpg" height=136 width=106 class="rotate270">
 				 </tr>
 				 <tr>
-				  <td> <img border=0 src="Card Images\64 BackCard.jpg" height=136 width=106 class="rotate90">
+				  <td> <img border=0 src="Card Images\64 BackCard.jpg" height=136 width=106 class="rotate270">
 				</tr>
 
 				<p id="demo"></p>
@@ -222,18 +261,23 @@ function Numsort(a,b) { return a - b; }
 
 				<form NAME="form1">
 
-				<table class = "player">
+				<table class = "player" id = "playerHand">
 				<tr>
-				  <td> <img border=0 src="Card Images\63 BackCard.jpg" >
-				  <td> <img border=0 src="Card Images\63 BackCard.jpg"height=200 width=106>
-				  <td> <img border=0 src="Card Images\63 BackCard.jpg" height=136 width=106>
-				  <td> <img border=0 src="Card Images\63 BackCard.jpg"height=136 width=106>
-				  <td> <img border=0 src="Card Images\63 BackCard.jpg" height=136 width=106>
+				  	<td> <a href="#" onClick="Display(0)">
+				       <img border=0 src="Card Images\63 BackCard.jpg"></a>
+				  	<td> <a href="#" onClick="Display(1)">
+				       <img border=0 src="Card Images\63 BackCard.jpg"></a>
+				  	<td> <a href="#" onClick="Display(2)">
+				       <img border=0 src="Card Images\63 BackCard.jpg"></a>
+				  	<td> <a href="#" onClick="Display(3)">
+				       <img border=0 src="Card Images\63 BackCard.jpg"></a>
+				  	<td> <a href="#" onClick="Display(4)">
+				       <img border=0 src="Card Images\63 BackCard.jpg"></a>
 				  <td> </td>
 				</tr>
 
 				<tr>
-				  <td> <B>Weight<BR>Score:</B>
+				  <td style="color:white"> <B>Weight<BR>Score:</B>
 				       <input TYPE="TEXT" SIZE=6 NAME="total" VALUE="100"></td>
 				  <td colspan=2> <B>Current Hand:</B>
 
@@ -252,7 +296,7 @@ function Numsort(a,b) { return a - b; }
 		border : 0;
 		}
 		body{
-		background-image : url(' bi-background-cubes.png ');
+		background-image : url(' Background.jpg ');
 		background-attachment : fixed;
 		background-size : 100% auto;
 		}
@@ -267,7 +311,7 @@ function Numsort(a,b) { return a - b; }
 		margin : 50px auto 0 auto;
 		}
 		.CPU_Three{
-		background-color : red;
+		//background-color : red;
 		float : left;
 		clear : none;
 		height : 0px;
@@ -319,9 +363,29 @@ function Numsort(a,b) { return a - b; }
 	    -ms-transform: rotate(90deg);
 	    transform: rotate(90deg);
 		}
+		.rotate270 {
+	    -webkit-transform: rotate(270deg);
+	    -moz-transform: rotate(270deg);
+	    -o-transform: rotate(270deg);
+	    -ms-transform: rotate(270deg);
+	    transform: rotate(270deg);
+		}
+		.rotate180 {
+	    -webkit-transform: rotate(180deg);
+	    -moz-transform: rotate(180deg);
+	    -o-transform: rotate(180deg);
+	    -ms-transform: rotate(180deg);
+	    transform: rotate(180deg);
+		}
+
 		table {
 	    //border: 1px solid blue;
 	    text-align: right;
+	  	}
+
+	  	#display{
+			padding-right: 50px;
+			padding-top: 50px;
 	  	}
 
   </style>
