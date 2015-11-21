@@ -8,10 +8,13 @@
 
 
 var score = 0;
+var tempCard;
 var dealt = false;
 var hand = new Array(5), CPU_Hand = new Array(5), CPU_Hand2 = new Array(5), CPU_Hand3 = new Array(6);
 var held = new Array(6);
 var deck = new Array(53);
+
+var players = new Array(4);
 
 var foodNames = ["0 Apple Bacon Pie", 6,"1 Bacon Gingerbread", 8,"2 Bacon Ice Cream Pie", 6,"3 Bitter Sport Cereal", 4,
 			"4 Cake Pops", 2,"5 Candy Cane", 1,"6 Chocolate Bacon Donut", 6,"7 Chocolate Bar", 2,"8 Chocolate Caramel Apple", 3,
@@ -34,6 +37,7 @@ var witchNames = ["57 Captured", 0,"58 Contra Band", 0,"59 Force Feed", 0,
 
 
 
+
 function Deal() {
 // fill the deck (in order, for now)
 
@@ -45,6 +49,13 @@ function Deal() {
 	CPU_Hand = InitPlayerDeck(5);
 	CPU_Hand2 = InitPlayerDeck(0);
 	CPU_Hand3 = InitPlayerDeck(12);
+
+	//initalize the players ---- gives bug
+	players[0] = new Player("Player 1", hand, 0);
+	players[1] = new Player("Player 2", CPU_Hand, 0);
+	players[2] = new Player("Player 3", CPU_Hand2, 0);
+	players[3] = new Player("Player 4", CPU_Hand3, 0);
+
 
 	dealt = true; //cards have been dealt.. now draw a new card
 
@@ -102,6 +113,14 @@ function Card(cardName, weight, cardType) {
    this.fname = fname;
 }
 
+// Constructor for a Player objects
+function Player(playerName, playerhand, weight) {
+   this.playerName = playerName;
+   this.playerhand = playerhand;
+   this.weight = weight;
+   this.fname = fname;
+}
+
 
 function DealDraw() {
    if (dealt == true) Draw();
@@ -153,18 +172,25 @@ function ShuffleDeck(){
 }
 
 
-// Constructor for a Player objects
-function Player(playerName, hand, weight) {
-   this.playerName = playerName;
-   this.hand = hand;
-   this.weight = weight;
-}
-
-
 function Display(pos){
 	document.images[11].src = hand[pos].fname();
+	tempCard = hand[pos];
 }
 
+function DisplayOptions(){
+
+}
+
+function ChangeWeight(){
+	var weight = parseInt(document.getElementById("total").value) + tempCard.weight;
+
+	if(weight < 0) 		 weight = 0;
+	else if(weight >= 5) alert("You have lost!!");
+	
+
+	document.getElementById('total').value = weight;
+
+}
 
 
 
@@ -226,12 +252,13 @@ function Display(pos){
 
 
 		<table class = "deck">
-		  <trclass = "deck">
+		  <tr>
 		  	<td> <a href="#" onClick="DealDraw()">
-				       <img border=0 src="Card Images\63 BackCard.jpg"></a>
+		  			<img border=0 src="Card Images\63 BackCard.jpg"></a>
 		  </tr>
 		  <tr>
-			<td> <img border=0 src="" style="width:318px;height:398px;margin-top:200px;margin-right:80px;">
+			<td> <a href="#" onClick="ChangeWeight()">
+					<img border=0 src="" style="width:318px;height:398px;margin-top:200px;margin-right:80px;"></a>
 		  </tr>
 		  <td> </td>
 		  </tr>
@@ -278,7 +305,7 @@ function Display(pos){
 
 				<tr>
 				  <td style="color:white"> <B>Weight<BR>Score:</B>
-				       <input TYPE="TEXT" SIZE=6 NAME="total" VALUE="100"></td>
+				       <input TYPE="TEXT" SIZE=6 NAME="total" id = "total" VALUE="0"></td>
 				  <td colspan=2> <B>Current Hand:</B>
 
 				  <td>
