@@ -17,6 +17,8 @@ var hand = new Array(5), CPU_Hand = new Array(5), CPU_Hand2 = new Array(5), CPU_
 var held = new Array(6);
 var deck = new Array(53);
 
+var position = -1;
+
 var players = new Array(4);
 
 var foodNames = ["0 Apple Bacon Pie", 6,"1 Bacon Gingerbread", 8,"2 Bacon Ice Cream Pie", 6,"3 Bitter Sport Cereal", 4,
@@ -53,7 +55,7 @@ function Deal() {
 	CPU_Hand2 = InitPlayerDeck(0);
 	CPU_Hand3 = InitPlayerDeck(12);
 
-	//initalize the players ---- gives bug
+	//initalize the players 
 	players[0] = new Player("Player 1", hand, 0);
 	players[1] = new Player("Player 2", CPU_Hand, 0);
 	players[2] = new Player("Player 3", CPU_Hand2, 0);
@@ -93,8 +95,9 @@ function Draw() {
     var x = row.insertCell(-1);
 
     var img = document.createElement('img');
+    img.id = "c5";
     img.src = deck[0].fname();
-    img.onclick = function() { Display(5); };
+    img.onclick = function() { Display("c5"); };
     x.appendChild(img);
 
 
@@ -177,24 +180,64 @@ function ShuffleDeck(){
 
 //Display the picture in the middle.
 function Display(pos){
-	document.images[11].src = hand[pos].fname();
-	tempCard = hand[pos];
+	var x = document.getElementById(pos);
+	
+	var s = x.src, loc = 0;
+	var text = s.replace(/[0-9]/g, '').replace(/%/g, '');
+	document.images[11].src = x.src;
+
+	//find the location of the card
+    for (i=0; i<5; i++) {
+    	newName = hand[i].cardName.replace(/[0-9]/g, '').replace(/\s/g, '');
+
+		if(text.indexOf(newName) > -1) loc = i;
+
+
+    }
+
+	tempCard = hand[loc];
+	position = loc;
 }
 
 function DisplayOptions(){
 	
-	ChangeWeight()
+	//ChangeWeight("total");
+	removeCard("playerhand");
 
 }
 
-function ChangeWeight(){
-	var weight = parseInt(document.getElementById("total").value) + tempCard.weight;
+function removeCard(handID){
+	//if (hand[5] != null) return; //makes sure you do not go over 6 cards
+
+	var loc = 0;
+	var tc = document.getElementById("playerHand");
+	var sCard = tempCard.cardName.replace(/[0-9]/g, '').replace(/\s/g, '');
+
+	var ary = tc ? tc.getElementsByTagName("img") : [];
+	
+	for(i = 0; i < ary.length; i++){
+		
+		newName = ary[i].src.replace(/[0-9]/g, '').replace(/%/g, '');
+
+		if(newName.indexOf(sCard) > -1) loc = i;
+
+	}
+
+    hand.pop(deck[loc]); //hand now contains the new card
+    var row = document.getElementById("playerHand").rows[0];
+    var x = row.deleteCell(loc);
+    document.images[11].src = "";
+
+}
+
+function ChangeWeight(weightLocation){
+	var weight = parseInt(document.getElementById(weightLocation).value) + tempCard.weight;
 
 	if(weight < 0) 		 weight = 0;
-	else if(weight >= 5) alert("You have lost!!");
+	else if(weight >= 5) //alert("You have lost!!");
 	
 
-	document.getElementById('total').value = weight;
+	document.getElementById(weightLocation).value = weight;
 
 }
 
@@ -216,7 +259,12 @@ function ChangeWeight(){
 <body>
 	<div class="blended_grid">
 
-				<table class = "CPU_Three">
+				<table class = "CPU_Three" id = "CPU_Three_Hand">
+				<tr>
+				  <td style="color:white"> <font size="6"><B>Weight:</B></font>
+				       <input TYPE="TEXT" SIZE=1 NAME="total" id = "total3" VALUE="0"></td>
+		
+				</tr>	
 				<tr>
 				  <td> <img border=0 src="Card Images\63 BackCard.jpg" height=136 width=106 class="rotate180">
 				  <td> <img border=0 src="Card Images\63 BackCard.jpg"height=136 width=106 class="rotate180">
@@ -230,7 +278,11 @@ function ChangeWeight(){
 
 		<form NAME="form1">
 
-				<table class = "CPU_One">
+				<table class = "CPU_One" id = "CPU_One_Hand">
+				<tr>
+					<td style="color:white"> <font size="6"><B>Weight:</B></font>
+				    <input TYPE="TEXT" SIZE=1 NAME="total" id = "total1" VALUE="0"></td>
+				</tr>
 				<tr>
 				 <td> <img border=0 src="Card Images\64 BackCard.jpg" height=136 width=106 class="rotate90">
 				</tr>
@@ -268,7 +320,11 @@ function ChangeWeight(){
 
 
 
-				<table class = "CPU_Two">
+				<table class = "CPU_Two" id = "CPU_Two_Hand">
+				<tr>
+					 <td style="color:white"> <font size="6"><B>Weight:</B></font>
+				       <input TYPE="TEXT" SIZE=1 NAME="total" id = "total2" VALUE="0"></td>
+				</tr>
 				<tr>
 				  <td> <img border=0 src="Card Images\64 BackCard.jpg" height=136 width=106 class="rotate270">
 				</tr>
@@ -293,16 +349,21 @@ function ChangeWeight(){
 
 				<table class = "player" id = "playerHand">
 				<tr>
-				  	<td> <a href="#" onClick="Display(0)">
-				       <img border=0 src="Card Images\63 BackCard.jpg"></a>
-				  	<td> <a href="#" onClick="Display(1)">
-				       <img border=0 src="Card Images\63 BackCard.jpg"></a>
-				  	<td> <a href="#" onClick="Display(2)">
-				       <img border=0 src="Card Images\63 BackCard.jpg"></a>
-				  	<td> <a href="#" onClick="Display(3)">
-				       <img border=0 src="Card Images\63 BackCard.jpg"></a>
-				  	<td> <a href="#" onClick="Display(4)">
-				       <img border=0 src="Card Images\63 BackCard.jpg"></a>
+				  	<td> <a href="#" onClick="Display('c0')">
+				       <img id = "c0" border=0 src="Card Images\63 BackCard.jpg"></a>
+				    </td>
+				  	<td> <a href="#" onClick="Display('c1')">
+				       <img id = "c1" border=0 src="Card Images\63 BackCard.jpg"></a>
+				    </td>
+				  	<td> <a href="#" onClick="Display('c2')">
+				       <img id = "c2" border=0 src="Card Images\63 BackCard.jpg"></a>
+				    </td>
+				  	<td> <a href="#" onClick="Display('c3')">
+				       <img id = "c3" border=0 src="Card Images\63 BackCard.jpg"></a>
+				  	</td>
+				  	<td> <a href="#" onClick="Display('c4')">
+				       <img id = "c4" border=0 src="Card Images\63 BackCard.jpg"></a>
+				    </td>
 				  <td> </td>
 				</tr>
 

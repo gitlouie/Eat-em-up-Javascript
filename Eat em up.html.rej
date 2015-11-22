@@ -1,0 +1,21 @@
+diff a/Eat em up.html b/Eat em up.html	(rejected hunks)
+@@ -256,14 +256,18 @@
+ 		  			<img border=0 src="Card Images\63 BackCard.jpg"></a>
+ 		  </tr>
+ 		  <tr>
+-			<td> <a href="#" onClick="ChangeWeight()">
++			<td> <a href="#" onClick="DisplayOptions()">
+ 					<img border=0 src="" style="width:318px;height:398px;margin-top:200px;margin-right:80px;"></a>
++
++
+ 		  </tr>
+ 		  <td> </td>
+ 		  </tr>
+ 		</table>
+ 
+ 
++
++
+ 				<table class = "CPU_Two">
+ 				<tr>
+ 				  <td> <img border=0 src="Card Images\64 BackCard.jpg" height=136 width=106 class="rotate270">
