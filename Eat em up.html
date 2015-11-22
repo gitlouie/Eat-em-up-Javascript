@@ -4,6 +4,9 @@
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 
 <title>Eat em up!</title>
+
+<link rel="stylesheet" type="text/css" href="style.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script LANGUAGE="JavaScript1.1" type="text/javascript1.1">
 
 
@@ -172,12 +175,15 @@ function ShuffleDeck(){
 }
 
 
+//Display the picture in the middle.
 function Display(pos){
 	document.images[11].src = hand[pos].fname();
 	tempCard = hand[pos];
 }
 
 function DisplayOptions(){
+	
+	ChangeWeight()
 
 }
 
@@ -191,13 +197,6 @@ function ChangeWeight(){
 	document.getElementById('total').value = weight;
 
 }
-
-
-
-
-
-
-
 
 
 
@@ -257,12 +256,16 @@ function ChangeWeight(){
 		  			<img border=0 src="Card Images\63 BackCard.jpg"></a>
 		  </tr>
 		  <tr>
-			<td> <a href="#" onClick="ChangeWeight()">
+			<td> <a href="#" onClick="DisplayOptions()">
 					<img border=0 src="" style="width:318px;height:398px;margin-top:200px;margin-right:80px;"></a>
+
+
 		  </tr>
 		  <td> </td>
 		  </tr>
 		</table>
+
+
 
 
 				<table class = "CPU_Two">
@@ -304,9 +307,9 @@ function ChangeWeight(){
 				</tr>
 
 				<tr>
-				  <td style="color:white"> <B>Weight<BR>Score:</B>
-				       <input TYPE="TEXT" SIZE=6 NAME="total" id = "total" VALUE="0"></td>
-				  <td colspan=2> <B>Current Hand:</B>
+				  <td style="color:white"> <font size="6"><B>Weight:</B></font>
+				       <input TYPE="TEXT" SIZE=1 NAME="total" id = "total" VALUE="0"></td>
+				  <td colspan=2  style="color:white">  <font size="6"><B>Current Hand:</B></font>
 
 				  <td>
 		
@@ -331,6 +334,17 @@ function ChangeWeight(){
 		height: 150px;
 		width: 115px;
 		}
+
+
+		input {
+		line-height: 4em;
+		background-image : url(' Background.jpg ');
+		background-attachment : fixed;
+		background-size : 100% auto;
+		color: #ffffff;
+		font-size: 24px;
+		}
+
 		.blended_grid{
 		display : block;
 		width : 1000px;
