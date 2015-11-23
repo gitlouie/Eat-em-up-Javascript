@@ -5,7 +5,6 @@
 
 <title>Eat em up!</title>
 
-<link rel="stylesheet" type="text/css" href="style.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script LANGUAGE="JavaScript1.1" type="text/javascript1.1">
 
@@ -88,7 +87,7 @@ function InitPlayerDeck(playerLoc){
 
 //Draw new cards
 function Draw() {
-	if (hand[5] != null) return; //makes sure you do not go over 6 cards
+	if (hand[4] != null) return; //makes sure you do not go over 5 cards
 
     hand.push(deck[0]); //hand now contains the new card
     var row = document.getElementById("playerHand").rows[0];
@@ -187,7 +186,7 @@ function Display(pos){
 	document.images[11].src = x.src;
 
 	//find the location of the card
-    for (i=0; i<5; i++) {
+    for (i=0; i<hand.length; i++) {
     	newName = hand[i].cardName.replace(/[0-9]/g, '').replace(/\s/g, '');
 
 		if(text.indexOf(newName) > -1) loc = i;
@@ -196,6 +195,7 @@ function Display(pos){
     }
 
 	tempCard = hand[loc];
+	console.log(tempCard);
 	position = loc;
 }
 
@@ -214,18 +214,20 @@ function removeCard(handID){
 	var sCard = tempCard.cardName.replace(/[0-9]/g, '').replace(/\s/g, '');
 
 	var ary = tc ? tc.getElementsByTagName("img") : [];
-	
+
+	//alert(newName + "      " + sCard);
 	for(i = 0; i < ary.length; i++){
 		
 		newName = ary[i].src.replace(/[0-9]/g, '').replace(/%/g, '');
-
+		
 		if(newName.indexOf(sCard) > -1) loc = i;
-
 	}
+	
+	hand.splice(loc, 1); //remove the card from the hand
 
-    hand.pop(deck[loc]); //hand now contains the new card
-    var row = document.getElementById("playerHand").rows[0];
-    var x = row.deleteCell(loc);
+    ary[loc].src = "";   //Make it empty.
+    console.log( hand );
+
     document.images[11].src = "";
 
 }
