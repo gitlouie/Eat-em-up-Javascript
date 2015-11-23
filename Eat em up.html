@@ -46,8 +46,8 @@ function Deal() {
 // fill the deck (in order, for now)
 
 
-	CreateDeck()
-	ShuffleDeck()
+	CreateDeck();
+	ShuffleDeck(55);
 
 	hand = InitPlayerDeck(17);
 	CPU_Hand = InitPlayerDeck(5);
@@ -59,6 +59,8 @@ function Deal() {
 	players[1] = new Player("Player 2", CPU_Hand, 0);
 	players[2] = new Player("Player 3", CPU_Hand2, 0);
 	players[3] = new Player("Player 4", CPU_Hand3, 0);
+
+	InsertWitches();
 
 
 	dealt = true; //cards have been dealt.. now draw a new card
@@ -87,6 +89,7 @@ function InitPlayerDeck(playerLoc){
 
 //Draw new cards
 function Draw() {
+	console.log(hand.length);
 	if (hand[4] != null) return; //makes sure you do not go over 5 cards
 
 	var tc = document.getElementById("playerHand");
@@ -105,7 +108,7 @@ function Draw() {
 	}
 
     deck.splice(0, 1); //remove the card from the deck
-
+    console.log("End of the function:   " +  hand.length);
 }
 
 // Make a filename for an image, given Card object
@@ -157,19 +160,27 @@ function CreateDeck(){
 	   x+= 2; //new item every 2 elements
 	}
 
+
+}
+
+//Insert witch cards after the inital cards have been dealt
+function InsertWitches(){
 	x = 0;// to index the names array
-	for (i = 53; i < 58; i++) {
+	for (i = 30; i < 35; i++) {
 	   deck[i] = new Card(witchNames[x], witchNames[x + 1], "spell");
 
 	   x+= 2; //new item every 2 elements
 	}
+	ShuffleDeck(33);
+
 }
-function ShuffleDeck(){
+
+function ShuffleDeck(num){
 	// shuffle the deck
    var n = Math.floor(400 * Math.random() + 500);
    for (i=0; i<n; i++) {
-      card1 = Math.floor(53*Math.random());
-      card2 = Math.floor(53*Math.random());
+      card1 = Math.floor(num*Math.random());
+      card2 = Math.floor(num*Math.random());
       temp = deck[card2];
       deck[card2] = deck[card1];
       deck[card1] = temp;
@@ -182,7 +193,9 @@ function ShuffleDeck(){
 //Display the picture in the middle.
 function Display(pos){
 	var x = document.getElementById(pos);
-	
+
+	if(x.src.indexOf("BackCard.jpg") > -1) { return; } // Display only after the card has been dealt
+
 	var s = x.src, loc = hand.length - 1;
 	var text = s.replace(/[0-9]/g, '').replace(/%/g, '');
 	document.images[11].src = x.src;
@@ -203,7 +216,7 @@ function Display(pos){
 
 function DisplayOptions(){
 	
-	//ChangeWeight("total");
+	ChangeWeight("total3");
 	removeCard("playerhand");
 
 }
@@ -234,16 +247,22 @@ function removeCard(handID){
 }
 
 function ChangeWeight(weightLocation){
+
 	var weight = parseInt(document.getElementById(weightLocation).value) + tempCard.weight;
 
 	if(weight < 0) 		 weight = 0;
 	else if(weight >= 5) //alert("You have lost!!");
 	
-
+	console.log(tempCard);
+	console.log("        ");
 	document.getElementById(weightLocation).value = weight;
 
 }
 
+$(document).ready(function(){
+        $('.imagen[src=""]').hide();
+        $('.imagen:not([src=""])').show();
+ });
 
 
 
@@ -397,6 +416,10 @@ function ChangeWeight(weightLocation){
 		img{
 		height: 150px;
 		width: 115px;
+		}
+
+		img[src=""] {
+    	visibility:hidden
 		}
 
 
