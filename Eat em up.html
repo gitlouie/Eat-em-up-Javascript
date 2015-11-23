@@ -9,11 +9,11 @@
 <script LANGUAGE="JavaScript1.1" type="text/javascript1.1">
 
 
-var score = 0;
+var score = 0, lastWeight;
 var tempCard;
 var dealt = false;
-var hand = new Array(5), CPU_Hand = new Array(5), CPU_Hand2 = new Array(5), CPU_Hand3 = new Array(6);
-var held = new Array(6);
+var hand = new Array(5), CPU_Hand = new Array(5), CPU_Hand2 = new Array(5), CPU_Hand3 = new Array(5);
+var usedCards = new Array(53);
 var deck = new Array(53);
 
 var position = -1;
@@ -47,7 +47,7 @@ function Deal() {
 
 
 	CreateDeck();
-	ShuffleDeck(55);
+	ShuffleDeck();
 
 	hand = InitPlayerDeck(17);
 	CPU_Hand = InitPlayerDeck(5);
@@ -89,7 +89,7 @@ function InitPlayerDeck(playerLoc){
 
 //Draw new cards
 function Draw() {
-	console.log(hand.length);
+	//console.log(hand.length);
 	if (hand[4] != null) return; //makes sure you do not go over 5 cards
 
 	var tc = document.getElementById("playerHand");
@@ -107,8 +107,18 @@ function Draw() {
 		}
 	}
 
+	isWitch("playerhand");
     deck.splice(0, 1); //remove the card from the deck
     console.log("End of the function:   " +  hand.length);
+}
+
+function isWitch(handID){
+
+	for(i = 0; i < handID.length; i++){
+		if(handID.cardType == "witch"){
+			alert("play it niggah!");
+		}
+	}	
 }
 
 // Make a filename for an image, given Card object
@@ -167,20 +177,21 @@ function CreateDeck(){
 function InsertWitches(){
 	x = 0;// to index the names array
 	for (i = 30; i < 35; i++) {
-	   deck[i] = new Card(witchNames[x], witchNames[x + 1], "spell");
+	   deck[i] = new Card(witchNames[x], witchNames[x + 1], "witch");
 
 	   x+= 2; //new item every 2 elements
 	}
-	ShuffleDeck(33);
+	ShuffleDeck();
 
 }
 
-function ShuffleDeck(num){
+function ShuffleDeck(){
+
 	// shuffle the deck
    var n = Math.floor(400 * Math.random() + 500);
    for (i=0; i<n; i++) {
-      card1 = Math.floor(num*Math.random());
-      card2 = Math.floor(num*Math.random());
+      card1 = Math.floor(deck.length *Math.random());
+      card2 = Math.floor(deck.length  *Math.random());
       temp = deck[card2];
       deck[card2] = deck[card1];
       deck[card1] = temp;
@@ -217,7 +228,7 @@ function Display(pos){
 function DisplayOptions(){
 	
 	ChangeWeight("total3");
-	removeCard("playerhand");
+	removeCard("playerHand");
 
 }
 
@@ -225,7 +236,7 @@ function removeCard(handID){
 	//if (hand[5] != null) return; //makes sure you do not go over 6 cards
 
 	
-	var tc = document.getElementById("playerHand");
+	var tc = document.getElementById(handID);
 	var sCard = tempCard.cardName.replace(/[0-9]/g, '').replace(/\s/g, '');
 
 	var ary = tc ? tc.getElementsByTagName("img") : [];
@@ -237,10 +248,11 @@ function removeCard(handID){
 		
 		if(newName.indexOf(sCard) > -1) loc = i;
 	}
+	usedCards.push(hand[loc]); //incase the cards run out to reshuffle
 	hand.splice(loc, 1); //remove the card from the hand
 
     ary[loc].src = "";   //Make it empty.
-   // console.log( hand );
+    console.table( usedCards, "cardName");
 
     document.images[11].src = "";
 
@@ -259,17 +271,6 @@ function ChangeWeight(weightLocation){
 
 }
 
-$(document).ready(function(){
-        $('.imagen[src=""]').hide();
-        $('.imagen:not([src=""])').show();
- });
-
-
-
-
-
-
-
 
 
 
@@ -281,6 +282,7 @@ $(document).ready(function(){
 <body>
 	<div class="blended_grid">
 
+			<!-- <img border=0 src="player3.jpg" id = "icon"> -->
 				<table class = "CPU_Three" id = "CPU_Three_Hand">
 				<tr>
 				  <td style="color:white"> <font size="6"><B>Weight:</B></font>
@@ -288,11 +290,11 @@ $(document).ready(function(){
 		
 				</tr>	
 				<tr>
-				  <td> <img border=0 src="Card Images\63 BackCard.jpg" height=136 width=106 class="rotate180">
-				  <td> <img border=0 src="Card Images\63 BackCard.jpg"height=136 width=106 class="rotate180">
-				  <td> <img border=0 src="Card Images\63 BackCard.jpg" height=136 width=106 class="rotate180">
-				  <td> <img border=0 src="Card Images\63 BackCard.jpg"height=136 width=106 class="rotate180">
-				  <td> <img border=0 src="Card Images\63 BackCard.jpg" height=136 width=106 class="rotate180">
+				  <td> <img border=0 src="Card Images\63 BackCard.jpg" class="rotate180">
+				  <td> <img border=0 src="Card Images\63 BackCard.jpg" class="rotate180">
+				  <td> <img border=0 src="Card Images\63 BackCard.jpg" class="rotate180">
+				  <td> <img border=0 src="Card Images\63 BackCard.jpg" class="rotate180">
+				  <td> <img border=0 src="Card Images\63 BackCard.jpg" class="rotate180">
 				  <td> </td>
 				</tr>
 
@@ -326,12 +328,13 @@ $(document).ready(function(){
 
 		<table class = "deck">
 		  <tr>
-		  	<td> <a href="#" onClick="DealDraw()">
+		  	<td> <a href="#" id = "pattened" onClick="DealDraw()">
 		  			<img border=0 src="Card Images\63 BackCard.jpg"></a>
 		  </tr>
 		  <tr>
-			<td> <a href="#" onClick="DisplayOptions()">
+			<td> <a href="#" id = "pattened" onClick="DisplayOptions()">
 					<img border=0 src="" style="width:318px;height:398px;margin-top:200px;margin-right:80px;"></a>
+			</td>
 
 
 		  </tr>
@@ -422,6 +425,19 @@ $(document).ready(function(){
     	visibility:hidden
 		}
 
+		/*#icon {
+    	height: 130px;
+		width: 115px;
+		}*/
+
+		#icon{
+	    position: relative;
+	    top: 80px;
+	    left: 450px;
+	    width: 180px;
+	    height: 100px;
+	    border: 3px solid #73AD21;
+	}
 
 		input {
 		line-height: 4em;
@@ -463,9 +479,13 @@ $(document).ready(function(){
 		clear : none;
 		height : 600px;
 		width : 680px;
+
+		}
+		#pattened { 
 		padding-right: 250px;
 		padding-bottom: 150px;
 		}
+
 		.CPU_Two{
 		//background-color : yellow;
 		float : left;
