@@ -89,20 +89,22 @@ function InitPlayerDeck(playerLoc){
 function Draw() {
 	if (hand[4] != null) return; //makes sure you do not go over 5 cards
 
-    hand.push(deck[0]); //hand now contains the new card
-    var row = document.getElementById("playerHand").rows[0];
-    var x = row.insertCell(-1);
+	var tc = document.getElementById("playerHand");
+	var sCard = tempCard.cardName.replace(/[0-9]/g, '').replace(/\s/g, '');
 
-    var img = document.createElement('img');
-    img.id = "c5";
-    img.src = deck[0].fname();
-    img.onclick = function() { Display("c5"); };
-    x.appendChild(img);
+	var ary = tc ? tc.getElementsByTagName("img") : [];
 
+	//replace the card that was taken away
+	for(i = 0; i < ary.length; i++){
 
-  
+		if(ary[i].src.indexOf("html") > -1) {
+			ary[i].src = deck[0].fname();
+			hand.splice(i, 0, deck[0]);	 //insert the new card where the previous card was.
+			break;
+		}
+	}
+
     deck.splice(0, 1); //remove the card from the deck
-
 
 }
 
@@ -181,12 +183,12 @@ function ShuffleDeck(){
 function Display(pos){
 	var x = document.getElementById(pos);
 	
-	var s = x.src, loc = 0;
+	var s = x.src, loc = hand.length - 1;
 	var text = s.replace(/[0-9]/g, '').replace(/%/g, '');
 	document.images[11].src = x.src;
 
 	//find the location of the card
-    for (i=0; i<hand.length; i++) {
+    for (i=0; i < hand.length; i++) {
     	newName = hand[i].cardName.replace(/[0-9]/g, '').replace(/\s/g, '');
 
 		if(text.indexOf(newName) > -1) loc = i;
@@ -195,7 +197,7 @@ function Display(pos){
     }
 
 	tempCard = hand[loc];
-	console.log(tempCard);
+	//console.log(tempCard);
 	position = loc;
 }
 
@@ -209,12 +211,12 @@ function DisplayOptions(){
 function removeCard(handID){
 	//if (hand[5] != null) return; //makes sure you do not go over 6 cards
 
-	var loc = 0;
+	
 	var tc = document.getElementById("playerHand");
 	var sCard = tempCard.cardName.replace(/[0-9]/g, '').replace(/\s/g, '');
 
 	var ary = tc ? tc.getElementsByTagName("img") : [];
-
+	var loc = ary.length - 1;
 	//alert(newName + "      " + sCard);
 	for(i = 0; i < ary.length; i++){
 		
@@ -222,11 +224,10 @@ function removeCard(handID){
 		
 		if(newName.indexOf(sCard) > -1) loc = i;
 	}
-	
 	hand.splice(loc, 1); //remove the card from the hand
 
     ary[loc].src = "";   //Make it empty.
-    console.log( hand );
+   // console.log( hand );
 
     document.images[11].src = "";
 
