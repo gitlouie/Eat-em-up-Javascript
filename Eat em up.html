@@ -13,7 +13,7 @@ var score = 0, lastWeight;
 var tempCard;
 var dealt = false;
 var hand = new Array(5), CPU_Hand = new Array(5), CPU_Hand2 = new Array(5), CPU_Hand3 = new Array(5);
-var usedCards = new Array(53);
+var usedCards = new Array(0);
 var deck = new Array(53);
 
 var position = -1;
@@ -55,10 +55,10 @@ function Deal() {
 	CPU_Hand3 = InitPlayerDeck(12);
 
 	//initalize the players 
-	players[0] = new Player("Player 1", hand, 0);
-	players[1] = new Player("Player 2", CPU_Hand, 0);
-	players[2] = new Player("Player 3", CPU_Hand2, 0);
-	players[3] = new Player("Player 4", CPU_Hand3, 0);
+	players[0] = new Player("Player 1", hand, 0, "PlayerHand", "total");
+	players[1] = new Player("Player 2", CPU_Hand, 0, "CPU_One_Hand", "total1");
+	players[2] = new Player("Player 3", CPU_Hand2, 0, "CPU_Two_Hand", "total2");
+	players[3] = new Player("Player 4", CPU_Hand3, 0, "CPU_Three_Hand", "total3");
 
 	InsertWitches();
 
@@ -134,10 +134,12 @@ function Card(cardName, weight, cardType) {
 }
 
 // Constructor for a Player objects
-function Player(playerName, playerhand, weight) {
+function Player(playerName, playerhand, weight, handID, totalID) {
    this.playerName = playerName;
    this.playerhand = playerhand;
    this.weight = weight;
+   this.handID = handID;
+   this.totalID = totalID;
    this.fname = fname;
 }
 
@@ -227,7 +229,9 @@ function Display(pos){
 
 function DisplayOptions(){
 	
-	ChangeWeight("total3");
+	var person = prompt("Please enter the player", "1");
+
+	ChangeWeight(person);
 	removeCard("playerHand");
 
 }
@@ -258,19 +262,38 @@ function removeCard(handID){
 
 }
 
-function ChangeWeight(weightLocation){
+function ChangeWeight(player){
 
-	var weight = parseInt(document.getElementById(weightLocation).value) + tempCard.weight;
+	var weight = players[player].weight + tempCard.weight;
 
 	if(weight < 0) 		 weight = 0;
-	else if(weight >= 5) //alert("You have lost!!");
+	else if(weight >= 5) playerLost(player);
 	
 	console.log(tempCard);
 	console.log("        ");
-	document.getElementById(weightLocation).value = weight;
+
+	players[player].weight = weight; //keep a copy of the weight
+	document.getElementById(players[player].totalID).value = weight;
 
 }
 
+// Removes the cards from the player's hand and places it in the discarded pile
+
+function playerLost(player){
+	var tc = document.getElementById(players[player].handID);
+	var ary = tc ? tc.getElementsByTagName("img") : [];
+console.table(players[player].playerhand, "cardName");
+	//remove the cards
+	for(i = 0; i < ary.length; i++){
+		ary[i].src = "";
+		usedCards.push(players[player].playerhand[i]); //Place the cards in the used 
+		players[player].playerhand.splice(0, 1); //remove the card from the hand
+
+	}
+	console.table(usedCards, "cardName");
+	//console.table(players[player].playerhand, "cardName");
+
+}
 
 
 
