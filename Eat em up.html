@@ -59,7 +59,7 @@ function Deal() {
 	CPU_Hand3 = InitPlayerDeck(12);
 
 	//initalize the players 
-	players[0] = new Player("Player 1", hand, 0, "PlayerHand", "total", stomach);
+	players[0] = new Player("Player 1", hand, 0, "playerHand", "total", stomach);
 	players[1] = new Player("Player 2", CPU_Hand, 0, "CPU_One_Hand", "total1", stomach1);
 	players[2] = new Player("Player 3", CPU_Hand2, 0, "CPU_Two_Hand", "total2", stomach2);
 	players[3] = new Player("Player 4", CPU_Hand3, 0, "CPU_Three_Hand", "total3", stomach3);
@@ -92,11 +92,11 @@ function InitPlayerDeck(playerLoc){
 
 
 //Draw new cards
-function Draw() {
-	//console.log(hand.length);
-	if (hand[4] != null) return; //makes sure you do not go over 5 cards
+function Draw(player) {
 
-	var tc = document.getElementById("playerHand");
+	if (players[player].playerhand[4] != null) return; //makes sure you do not go over 5 cards
+
+	var tc = document.getElementById(players[player].handID);
 	var sCard = tempCard.cardName.replace(/[0-9]/g, '').replace(/\s/g, '');
 
 	var ary = tc ? tc.getElementsByTagName("img") : [];
@@ -106,21 +106,23 @@ function Draw() {
 
 		if(ary[i].src.indexOf("html") > -1) {
 			ary[i].src = deck[0].fname();
-			hand.splice(i, 0, deck[0]);	 //insert the new card where the previous card was.
+			players[player].playerhand.splice(i, 0, deck[0]);	 //insert the new card where the previous card was.
 			break;
 		}
 	}
 
-	isWitch("playerhand");
+	isWitch(0);
     deck.splice(0, 1); //remove the card from the deck
-    console.log("End of the function:   " +  hand.length);
+   // console.log("End of the function:   " +  players[player].playerhand.length);
+     console.table(deck, "cardName");
 }
 
-function isWitch(handID){
+function isWitch(player){
+	var currHand = players[player].playerhand;
 
-	for(i = 0; i < handID.length; i++){
-		if(handID.cardType == "witch"){
-			alert("play it niggah!");
+	for(i = 0; i < currHand.length; i++){
+		if(currHand[i].cardType == "witch"){
+			console.log("End of the function:   WITCHHHHH");
 		}
 	}	
 }
@@ -150,7 +152,7 @@ function Player(playerName, playerhand, weight, handID, totalID, stomach) {
 
 
 function DealDraw() {
-   if (dealt == true) Draw();
+   if (dealt == true) Draw(0);
    else Deal();
 }
 
