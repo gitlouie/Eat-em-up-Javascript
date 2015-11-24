@@ -127,12 +127,26 @@ function isWitch(player, card){
 		if(currHand[i].cardType == "witch"){
 
 			// Check to see how many witches there are...
-			// If Witches  > 2 --> player loses.
-			if(document.images[11].src.indexOf("html") > -1 ) 		{ document.images[11].src = card.fname(); document.images[14].src = card.fname(); }
-			else if(document.images[12].src.indexOf("html") > -1)   { document.images[12].src = card.fname(); document.images[14].src = card.fname(); }
-			else if(document.images[13].src.indexOf("html") > -1)   { document.images[13].src = card.fname(); document.images[14].src = card.fname(); }
-			else 									                { playerLost(player);  break; }
 
+			for(i = 11; i < 14; i++){
+				//if > 2 witches player loses
+				if(i == 13 && document.images[i].src.indexOf("html") > -1) {
+					playerLost(player);  
+					document.images[13].src = card.fname();
+					document.images[14].src = card.fname();
+					console.log("Player " + player + " has lost!");
+					break; 
+
+				}
+
+				if(document.images[i].src.indexOf("html") > -1 ) {
+					document.images[i].src = card.fname();
+					tempCard = card;
+					removeCard(currHandID); 
+					document.images[14].src = card.fname();
+					break;
+				}
+			}
 
 		}
 	}	
