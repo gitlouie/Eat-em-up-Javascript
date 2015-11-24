@@ -11,7 +11,7 @@
 
 
 var score = 0, lastWeight;
-var tempCard;
+var tempCard, tempCard2;
 var dealt = false;
 var hand = new Array(5), CPU_Hand = new Array(5), CPU_Hand2 = new Array(5), CPU_Hand3 = new Array(5);
 var stomach = new Array(0), stomach1 = new Array(0), stomach2 = new Array(0), stomach3 = new Array(0);
@@ -113,6 +113,11 @@ function Draw(player) {
 
 	isWitch(player, deck[0]);
     deck.splice(0, 1); //remove the card from the deck
+
+    //testing purposes!!!!
+    var card = new Card("57 Captured", 0, "witch");
+    deck.splice(0, 0, card);
+
    // console.log("End of the function:   " +  players[player].playerhand.length);
      console.table(deck, "cardName");
 }
@@ -131,10 +136,11 @@ function isWitch(player, card){
 			for(i = 11; i < 14; i++){
 				//if > 2 witches player loses
 				if(i == 13 && document.images[i].src.indexOf("html") > -1) {
-					playerLost(player);  
+					person = largestWeight();
+					playerLost(person);  
 					document.images[13].src = card.fname();
 					document.images[14].src = card.fname();
-					console.log("Player " + player + " has lost!");
+					console.log("Player " + person + " has lost!");
 					break; 
 
 				}
@@ -142,14 +148,55 @@ function isWitch(player, card){
 				if(document.images[i].src.indexOf("html") > -1 ) {
 					document.images[i].src = card.fname();
 					tempCard = card;
+					tempCard2 = card;
 					removeCard(currHandID); 
 					document.images[14].src = card.fname();
+					doWitch(player, card);
 					break;
 				}
 			}
 
 		}
 	}	
+}
+
+function largestWeight(){
+	var weight = players[0].weight, weight2 = players[1].weight, 
+		weight3 = players[2].weight, weight4 = players[3].weight;
+
+	var max = Math.max(weight, weight2, weight3, weight4)
+
+	switch(max){
+		case weight:
+			return 0;
+			break;
+		case weight2:
+			return 1;
+			break;
+		case weight3:
+			return 2;
+			break;
+		case weight4:
+			return 3;
+			break;
+		default:
+			return -1;
+	}
+}
+
+
+function doWitch(player, card){
+	var currHand = players[player].playerhand;
+	var currHandID = players[player].handID;
+	var ranNumber = Math.floor(Math.random() * currHand.length);
+
+	if(tempCard.cardName == "57 Captured"){
+		tempCard = currHand[ranNumber];
+		alert("A random card from your deck will be removed.");
+		removeCard(currHandID); 
+		document.images[14].src = tempCard2.fname();
+
+	}
 }
 
 // Make a filename for an image, given Card object
@@ -262,7 +309,7 @@ function Display(pos){
 function DisplayOptions(){
 	
 	//var person = prompt("Please enter the player", "1");
-	alert("Select a player by clicking on them");
+	//alert("Select a player by clicking on them");
 	whichPlayer();
 	//ChangeWeight(person);
 	
@@ -291,7 +338,7 @@ function removeCard(handID){
 
     ary[loc].src = "";   //Make it empty.
    // console.table( usedCards, "cardName");
-console.table(players[0].playerhand, "cardName");
+	console.table(players[0].playerhand, "cardName");
     document.images[14].src = "";
 
 }
