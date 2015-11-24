@@ -55,8 +55,8 @@ function Deal() {
 
 	hand = InitPlayerDeck(20);
 	CPU_Hand = InitPlayerDeck(5);
-	CPU_Hand2 = InitPlayerDeck(0);
-	CPU_Hand3 = InitPlayerDeck(15);
+	CPU_Hand2 = InitPlayerDeck(15);
+	CPU_Hand3 = InitPlayerDeck(0);
 
 	//initalize the players 
 	players[0] = new Player("Player 1", hand, 0, "playerHand", "total", stomach);
@@ -115,11 +115,11 @@ function Draw(player) {
     deck.splice(0, 1); //remove the card from the deck
 
     //testing purposes!!!!
-    var card = new Card("57 Captured", 0, "witch");
+    var card = new Card("59 Force Feed", 0, "witch");
     deck.splice(0, 0, card);
 
    // console.log("End of the function:   " +  players[player].playerhand.length);
-     console.table(deck, "cardName");
+   //  console.table(deck, "cardName");
 }
 
 // Check to see if the drawn card is a witch
@@ -195,7 +195,86 @@ function doWitch(player, card){
 		alert("A random card from your deck will be removed.");
 		removeCard(currHandID); 
 		document.images[14].src = tempCard2.fname();
+	}
+	/*else if(tempCard.cardName == "58 Contra Band"){
+		alert("A random card from your deck will be swapped with the player across from you.");
+		swapCards(player);
+		document.images[14].src = tempCard2.fname();
+	}*/
+	else if(tempCard.cardName == "59 Force Feed"){
+		alert("A random food card (if available)from your deck will be fed to you and be removed");
+		for(i = 0; i < currHand.length; i++){
+			if(currHand[i].cardType == "food"){
+				console.log("I got in food");
+				tempCard = currHand[i];
+				ChangeWeight2(player, currHand[i]);
+				break;
+			}
+		}
+		removeCard(currHandID); 
 
+	}
+
+}
+
+
+function ChangeWeight2(player, card){
+
+	console.table( players[player].stomach, "cardType");
+	var weight = players[player].weight + card.weight;
+
+	if(weight < 0) 		 weight = 0;
+	else if(weight >= 5) playerLost(player);
+	
+	players[player].stomach.push(card); //incase the cards run out to reshuffle
+	players[player].weight = weight; //keep a copy of the weight
+	document.getElementById(players[player].totalID).value = weight;
+	console.table( players[player].stomach, "cardName");
+		
+
+}
+
+
+//DOES NOT WORK. Currently gives a duplicate.
+function swapCards(player){
+	console.table(players[0].playerhand, "cardName");
+	console.table(players[3].playerhand, "cardName");
+
+	console.log("________________________________________________________________________");
+	
+	var indexStart, indexStart2;
+	if(player == 0) {player2 = 3; indexStart = 20; indexStart2 = 0;}
+	if(player == 1) {player2 = 2; indexStart = 5;  indexStart2 = 15;}
+	if(player == 2) {player2 = 1; indexStart = 15; indexStart2 = 5;}
+	if(player == 3) {player2 = 0; indexStart = 0;  indexStart2 = 20;}
+
+	var player2;
+	var currHand = players[player].playerhand, currHand2 = players[player2].playerhand;
+	var ranNumber = Math.floor(Math.random() * currHand.length), ranNumber2 = Math.floor(Math.random() * currHand2.length);
+
+
+	//swap the cards
+	temp = players[player].playerhand[ranNumber];
+	players[player].playerhand[ranNumber] = players[player2].playerhand[ranNumber2];
+	players[player2].playerhand[ranNumber2] = temp;
+
+	replaceImage(indexStart2, players[player2].playerhand);
+
+	replaceImage(indexStart, players[player].playerhand);
+
+	console.table(players[player].playerhand, "cardName");
+	console.table(players[player2].playerhand, "cardName");	
+
+
+}
+
+function replaceImage(ind, currHand){
+	for(i = 0; i < 4; i++){
+		document.images[ind].src = "";
+	}
+	for(i = 0; i < currHand.length; i++){
+		document.images[ind].src = currHand[i].fname();
+		ind++;
 	}
 }
 
