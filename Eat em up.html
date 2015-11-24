@@ -6,15 +6,19 @@
 <title>Eat em up!</title>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-<script LANGUAGE="JavaScript1.1" type="text/javascript1.1">
+<script >
+
 
 
 var score = 0, lastWeight;
 var tempCard;
 var dealt = false;
 var hand = new Array(5), CPU_Hand = new Array(5), CPU_Hand2 = new Array(5), CPU_Hand3 = new Array(5);
+var stomach = new Array(0), stomach1 = new Array(0), stomach2 = new Array(0), stomach3 = new Array(0);
 var usedCards = new Array(0);
 var deck = new Array(53);
+
+var player1 = 0, player2 = 0, player3 = 0;
 
 var position = -1;
 
@@ -55,10 +59,10 @@ function Deal() {
 	CPU_Hand3 = InitPlayerDeck(12);
 
 	//initalize the players 
-	players[0] = new Player("Player 1", hand, 0, "PlayerHand", "total");
-	players[1] = new Player("Player 2", CPU_Hand, 0, "CPU_One_Hand", "total1");
-	players[2] = new Player("Player 3", CPU_Hand2, 0, "CPU_Two_Hand", "total2");
-	players[3] = new Player("Player 4", CPU_Hand3, 0, "CPU_Three_Hand", "total3");
+	players[0] = new Player("Player 1", hand, 0, "PlayerHand", "total", stomach);
+	players[1] = new Player("Player 2", CPU_Hand, 0, "CPU_One_Hand", "total1", stomach1);
+	players[2] = new Player("Player 3", CPU_Hand2, 0, "CPU_Two_Hand", "total2", stomach2);
+	players[3] = new Player("Player 4", CPU_Hand3, 0, "CPU_Three_Hand", "total3", stomach3);
 
 	InsertWitches();
 
@@ -134,12 +138,13 @@ function Card(cardName, weight, cardType) {
 }
 
 // Constructor for a Player objects
-function Player(playerName, playerhand, weight, handID, totalID) {
+function Player(playerName, playerhand, weight, handID, totalID, stomach) {
    this.playerName = playerName;
    this.playerhand = playerhand;
    this.weight = weight;
    this.handID = handID;
    this.totalID = totalID;
+   this.stomach = stomach;
    this.fname = fname;
 }
 
@@ -229,10 +234,12 @@ function Display(pos){
 
 function DisplayOptions(){
 	
-	var person = prompt("Please enter the player", "1");
-
-	ChangeWeight(person);
-	removeCard("playerHand");
+	//var person = prompt("Please enter the player", "1");
+	alert("Select a player by clicking on them");
+	whichPlayer();
+	//ChangeWeight(person);
+	
+	//displayCardWeights();
 
 }
 
@@ -252,12 +259,12 @@ function removeCard(handID){
 		
 		if(newName.indexOf(sCard) > -1) loc = i;
 	}
-	usedCards.push(hand[loc]); //incase the cards run out to reshuffle
-	hand.splice(loc, 1); //remove the card from the hand
+	usedCards.push(players[0].playerhand[loc]); //incase the cards run out to reshuffle
+	players[0].playerhand.splice(loc, 1); //remove the card from the hand
 
     ary[loc].src = "";   //Make it empty.
-    console.table( usedCards, "cardName");
-
+   // console.table( usedCards, "cardName");
+console.table(players[0].playerhand, "cardName");
     document.images[11].src = "";
 
 }
@@ -269,11 +276,14 @@ function ChangeWeight(player){
 	if(weight < 0) 		 weight = 0;
 	else if(weight >= 5) playerLost(player);
 	
-	console.log(tempCard);
-	console.log("        ");
+	//console.log(tempCard);
+	//console.log("        ");
 
+	players[player].stomach.push(tempCard); //incase the cards run out to reshuffle
 	players[player].weight = weight; //keep a copy of the weight
 	document.getElementById(players[player].totalID).value = weight;
+
+	//console.table( players[player].stomach, "cardName");
 
 }
 
@@ -282,7 +292,7 @@ function ChangeWeight(player){
 function playerLost(player){
 	var tc = document.getElementById(players[player].handID);
 	var ary = tc ? tc.getElementsByTagName("img") : [];
-console.table(players[player].playerhand, "cardName");
+	//console.table(players[player].playerhand, "cardName");
 	//remove the cards
 	for(i = 0; i < ary.length; i++){
 		ary[i].src = "";
@@ -290,13 +300,33 @@ console.table(players[player].playerhand, "cardName");
 		players[player].playerhand.splice(0, 1); //remove the card from the hand
 
 	}
-	console.table(usedCards, "cardName");
+	
+	//console.table(usedCards, "cardName");
 	//console.table(players[player].playerhand, "cardName");
 
 }
 
+function displayCardWeights(){
 
+	for(i = 1; i < 4; i++){
+		console.log("Player " + i)
+		console.table(players[i].stomach, "cardName");
+	}
+}
 
+$(window).load(function(){ 
+	 player1 = document.getElementById("CPU_One_Hand");
+	 player2 = document.getElementById("CPU_Two_Hand");
+	 player3 = document.getElementById("CPU_Three_Hand");
+
+})
+
+// Turns on a clickable state to select the person to use the card on.
+function whichPlayer(){
+	$(player1).on('click', function(){   $(player1).off('click'); $(player2).off('click');  $(player3).off('click'); ChangeWeight(1); removeCard("playerHand");});
+	$(player2).on('click', function(){   $(player1).off('click'); $(player2).off('click');  $(player3).off('click'); ChangeWeight(2); removeCard("playerHand");});
+	$(player3).on('click', function(){   $(player1).off('click'); $(player2).off('click');  $(player3).off('click'); ChangeWeight(3); removeCard("playerHand");});
+}
 
 
 
