@@ -53,10 +53,10 @@ function Deal() {
 	CreateDeck();
 	ShuffleDeck();
 
-	hand = InitPlayerDeck(17);
+	hand = InitPlayerDeck(20);
 	CPU_Hand = InitPlayerDeck(5);
 	CPU_Hand2 = InitPlayerDeck(0);
-	CPU_Hand3 = InitPlayerDeck(12);
+	CPU_Hand3 = InitPlayerDeck(15);
 
 	//initalize the players 
 	players[0] = new Player("Player 1", hand, 0, "playerHand", "total", stomach);
@@ -111,18 +111,29 @@ function Draw(player) {
 		}
 	}
 
-	isWitch(0);
+	isWitch(player, deck[0]);
     deck.splice(0, 1); //remove the card from the deck
    // console.log("End of the function:   " +  players[player].playerhand.length);
      console.table(deck, "cardName");
 }
 
-function isWitch(player){
+// Check to see if the drawn card is a witch
+
+function isWitch(player, card){
 	var currHand = players[player].playerhand;
+	var currHandID = players[player].handID;
 
 	for(i = 0; i < currHand.length; i++){
 		if(currHand[i].cardType == "witch"){
-			console.log("End of the function:   WITCHHHHH");
+
+			// Check to see how many witches there are...
+			// If Witches  > 2 --> player loses.
+			if(document.images[11].src.indexOf("html") > -1 ) 		{ document.images[11].src = card.fname(); document.images[14].src = card.fname(); }
+			else if(document.images[12].src.indexOf("html") > -1)   { document.images[12].src = card.fname(); document.images[14].src = card.fname(); }
+			else if(document.images[13].src.indexOf("html") > -1)   { document.images[13].src = card.fname(); document.images[14].src = card.fname(); }
+			else 									                { playerLost(player);  break; }
+
+
 		}
 	}	
 }
@@ -218,7 +229,7 @@ function Display(pos){
 
 	var s = x.src, loc = hand.length - 1;
 	var text = s.replace(/[0-9]/g, '').replace(/%/g, '');
-	document.images[11].src = x.src;
+	document.images[14].src = x.src;
 
 	//find the location of the card
     for (i=0; i < hand.length; i++) {
@@ -267,7 +278,7 @@ function removeCard(handID){
     ary[loc].src = "";   //Make it empty.
    // console.table( usedCards, "cardName");
 console.table(players[0].playerhand, "cardName");
-    document.images[11].src = "";
+    document.images[14].src = "";
 
 }
 
@@ -386,9 +397,16 @@ function whichPlayer(){
 		  	<td> <a href="#" id = "pattened" onClick="DealDraw()">
 		  			<img border=0 src="Card Images\63 BackCard.jpg"></a>
 		  </tr>
+		  <td></td>
+		  <tr align = "middle">
+		  	 <td > <img border=0 src=""  > 
+			  <img border=0 src=""  > 
+			  <img border=0 src=""  > </td> 
+		
+		  </tr>
 		  <tr>
 			<td> <a href="#" id = "pattened" onClick="DisplayOptions()">
-					<img border=0 src="" style="width:318px;height:398px;margin-top:200px;margin-right:80px;"></a>
+					<img border=0 src="" style="width:318px;height:398px;margin-top:200px;margin-right:180px;"></a>
 			</td>
 
 
@@ -494,6 +512,7 @@ function whichPlayer(){
 	    border: 3px solid #73AD21;
 	}
 
+
 		input {
 		line-height: 4em;
 		background-image : url(' Background.jpg ');
@@ -537,7 +556,7 @@ function whichPlayer(){
 
 		}
 		#pattened { 
-		padding-right: 250px;
+		padding-right: 282px;
 		padding-bottom: 150px;
 		}
 
