@@ -110,10 +110,11 @@ function Draw(player) {
 			break;
 		}
 	}
-
-	isWitch(player, deck[0]);
+	tempCard2 = deck[0];
 
     console.log("Player " + player + " just drew " + deck[0].cardName);
+    deck.splice(0, 1); //remove the card from the deck
+    isWitch(player, tempCard2);
 
     deck.splice(0, 1); //remove the card from the deck
 
@@ -160,6 +161,7 @@ function isWitch(player, card){
 					removeCard(player, currHandID); 
 					document.images[14].src = card.fname();
 					doWitch(player, card);
+					Draw(player);
 					break;
 				}
 			}
@@ -366,6 +368,8 @@ function InsertWitches(){
 	   x+= 2; //new item every 2 elements
 	}
 	ShuffleDeck();
+	console.log("This is the hsuffled deck");
+	console.table(deck, "cardName");
 
 }
 
@@ -374,8 +378,8 @@ function ShuffleDeck(){
 	// shuffle the deck
    var n = Math.floor(400 * Math.random() + 500);
    for (i=0; i<n; i++) {
-      card1 = Math.floor(deck.length *Math.random());
-      card2 = Math.floor(deck.length  *Math.random());
+      card1 = Math.floor(deck.length * Math.random());
+      card2 = Math.floor(deck.length * Math.random());
       temp = deck[card2];
       deck[card2] = deck[card1];
       deck[card1] = temp;
@@ -395,12 +399,12 @@ function playCard(user){
 
 	pWeights = largestWeight();
 
-	if(pWeights[0] == pWeights[1]) { pWeights[0] = 0; }
-	if(pWeights[0] == user) { pWeights[0] = pWeights[1]; }
+	if(pWeights[0] == pWeights[1]) { pWeights[1] = 0; }
+	if(pWeights[1] == user) { pWeights[1] = pWeights[0]; }
 	
 	console.log("player " + user + " will play " + tempCard.cardName + "  on player " + pWeights[0]);
 	// Change the weight of the chubbiest one
-	ChangeWeight(pWeights[0]); 
+	ChangeWeight(pWeights[1]); 
 
 	Draw(user); //draw a new card
 
