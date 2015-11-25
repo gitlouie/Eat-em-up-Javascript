@@ -112,14 +112,19 @@ function Draw(player) {
 	}
 
 	isWitch(player, deck[0]);
+
+    console.log("Player " + player + " just drew " + deck[0].cardName);
+
     deck.splice(0, 1); //remove the card from the deck
 
+    if(player == 0){ compTurn(); }
     //testing purposes!!!!
-    var card = new Card("60 Turning Point", 0, "witch");
-    deck.splice(0, 0, card);
+   // var card = new Card("60 Turning Point", 0, "witch");
+   // deck.splice(0, 0, card);
 
    // console.log("End of the function:   " +  players[player].playerhand.length);
    //  console.table(deck, "cardName");
+
 }
 
 // Check to see if the drawn card is a witch
@@ -138,8 +143,11 @@ function isWitch(player, card){
 				if(i == 13 && document.images[i].src.indexOf("html") > -1) {
 					person = largestWeight();
 					playerLost(person[0]);  
+					tempCard = card;
+					removeCard(player, currHandID); 
 					document.images[13].src = card.fname();
 					document.images[14].src = card.fname();
+
 					console.log("Player " + person[0] + " has lost!");
 					break; 
 
@@ -149,7 +157,7 @@ function isWitch(player, card){
 					document.images[i].src = card.fname();
 					tempCard = card;
 					tempCard2 = card;
-					removeCard(currHandID); 
+					removeCard(player, currHandID); 
 					document.images[14].src = card.fname();
 					doWitch(player, card);
 					break;
@@ -187,7 +195,7 @@ function doWitch(player, card){
 	if(tempCard.cardName == "57 Captured"){
 		tempCard = currHand[ranNumber];
 		alert("A random card from your deck will be removed.");
-		removeCard(currHandID); 
+		removeCard(player, currHandID); 
 		document.images[14].src = tempCard2.fname();
 	}
 	/*else if(tempCard.cardName == "58 Contra Band"){
@@ -204,7 +212,7 @@ function doWitch(player, card){
 				break;
 			}
 		}
-		removeCard(currHandID); 
+		removeCard(player, currHandID); 
 		document.images[14].src = card.fname();
 	}
 	else if(tempCard.cardName == "60 Turning Point"){
@@ -376,6 +384,33 @@ function ShuffleDeck(){
 
 }
 
+function playCard(user){
+	var currHand = players[user].playerhand;
+	console.table(currHand, "cardName");
+	var ranNumber = Math.floor(Math.random() * currHand.length);
+	var pWeights = new Array(0);
+
+	tempCard = currHand[ranNumber];
+	removeCard(user, players[user].handID);
+
+	pWeights = largestWeight();
+
+	if(pWeights[0] == pWeights[1]) { pWeights[0] = 0; }
+	if(pWeights[0] == user) { pWeights[0] = pWeights[1]; }
+	
+	console.log("player " + user + " will play " + tempCard.cardName + "  on player " + pWeights[0]);
+	// Change the weight of the chubbiest one
+	ChangeWeight(pWeights[0]); 
+
+	Draw(user); //draw a new card
+
+}
+
+function compTurn(){
+	playCard(1);
+	playCard(2);
+	playCard(3);
+}
 
 //Display the picture in the middle.
 function Display(pos){
@@ -412,7 +447,7 @@ function DisplayOptions(){
 
 }
 
-function removeCard(handID){
+function removeCard(player, handID){
 	//if (hand[5] != null) return; //makes sure you do not go over 6 cards
 
 	
@@ -428,8 +463,8 @@ function removeCard(handID){
 		
 		if(newName.indexOf(sCard) > -1) loc = i;
 	}
-	usedCards.push(players[0].playerhand[loc]); //incase the cards run out to reshuffle
-	players[0].playerhand.splice(loc, 1); //remove the card from the hand
+	usedCards.push(players[player].playerhand[loc]); //incase the cards run out to reshuffle
+	players[player].playerhand.splice(loc, 1); //remove the card from the hand
 
     ary[loc].src = "";   //Make it empty.
    // console.table( usedCards, "cardName");
@@ -452,7 +487,7 @@ function ChangeWeight(player){
 	players[player].weight = weight; //keep a copy of the weight
 	document.getElementById(players[player].totalID).value = weight;
 
-	console.log("orig stomach");
+	console.log(player + " stomach");
 	console.table( players[player].stomach, "cardName");
 
 }
@@ -493,9 +528,9 @@ $(window).load(function(){
 
 // Turns on a clickable state to select the person to use the card on.
 function whichPlayer(){
-	$(player1).on('click', function(){   $(player1).off('click'); $(player2).off('click');  $(player3).off('click'); ChangeWeight(1); removeCard("playerHand");});
-	$(player2).on('click', function(){   $(player1).off('click'); $(player2).off('click');  $(player3).off('click'); ChangeWeight(2); removeCard("playerHand");});
-	$(player3).on('click', function(){   $(player1).off('click'); $(player2).off('click');  $(player3).off('click'); ChangeWeight(3); removeCard("playerHand");});
+	$(player1).on('click', function(){   $(player1).off('click'); $(player2).off('click');  $(player3).off('click'); ChangeWeight(1); removeCard(0, "playerHand");  });
+	$(player2).on('click', function(){   $(player1).off('click'); $(player2).off('click');  $(player3).off('click'); ChangeWeight(2); removeCard(0, "playerHand");  });
+	$(player3).on('click', function(){   $(player1).off('click'); $(player2).off('click');  $(player3).off('click'); ChangeWeight(3); removeCard(0, "playerHand");  });
 }
 
 
