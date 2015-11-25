@@ -18,7 +18,7 @@ var stomach = new Array(0), stomach1 = new Array(0), stomach2 = new Array(0), st
 var usedCards = new Array(0);
 var deck = new Array(53);
 
-var player1 = 0, player2 = 0, player3 = 0;
+var player1 = 0, player2 = 0, player3 = 0, playersLost = 0;
 
 var position = -1;
 
@@ -537,6 +537,7 @@ function ChangeWeight(player){
 function playerLost(player){
 	var tc = document.getElementById(players[player].handID);
 	var ary = tc ? tc.getElementsByTagName("img") : [];
+	playersLost++;
 	//console.table(players[player].playerhand, "cardName");
 	//remove the cards
 	for(i = 0; i < ary.length; i++){
@@ -545,12 +546,25 @@ function playerLost(player){
 		players[player].playerhand.splice(0, 1); //remove the card from the hand
 
 	}
+	// to end the function.
+	if(player == 0) {
+		alert("Oh no you lost! The game will refresh!")
+		location.reload();
+	}
+	if(playersLost == 3){
+		alert("Congrats you won!!! The game will refresh!")
+		location.reload();
+	}
+
+
 	players[player] = null;
 	Deal();
 	//console.table(usedCards, "cardName");
 	//console.table(players[player].playerhand, "cardName");
 
 }
+
+
 
 function displayCardWeights(){
 
