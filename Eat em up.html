@@ -22,7 +22,7 @@ var player1 = 0, player2 = 0, player3 = 0;
 
 var position = -1;
 
-var players = new Array(4), playersLost = new Array(3);
+var players =  ["", "","",""];
 
 var foodNames = ["0 Apple Bacon Pie", 6,"1 Bacon Gingerbread", 8,"2 Bacon Ice Cream Pie", 6,"3 Bitter Sport Cereal", 4,
 			"4 Cake Pops", 2,"5 Candy Cane", 1,"6 Chocolate Bacon Donut", 6,"7 Chocolate Bar", 2,"8 Chocolate Caramel Apple", 3,
@@ -53,16 +53,26 @@ function Deal() {
 	CreateDeck();
 	ShuffleDeck();
 
-	hand = InitPlayerDeck(20);
-	CPU_Hand = InitPlayerDeck(5);
-	CPU_Hand2 = InitPlayerDeck(15);
-	CPU_Hand3 = InitPlayerDeck(0);
+	if(players[0] != undefined){
+		hand = InitPlayerDeck(20);
+		players[0] = new Player("Player 1", hand, 0, "playerHand", "total", stomach);
+	}
 
-	//initalize the players 
-	players[0] = new Player("Player 1", hand, 0, "playerHand", "total", stomach);
-	players[1] = new Player("Player 2", CPU_Hand, 0, "CPU_One_Hand", "total1", stomach1);
-	players[2] = new Player("Player 3", CPU_Hand2, 0, "CPU_Two_Hand", "total2", stomach2);
-	players[3] = new Player("Player 4", CPU_Hand3, 0, "CPU_Three_Hand", "total3", stomach3);
+	if(players[1] != undefined){
+		CPU_Hand = InitPlayerDeck(5);
+		players[1] = new Player("Player 2", CPU_Hand, 0, "CPU_One_Hand", "total1", stomach1);
+	}
+
+	if(players[2] != undefined){
+		CPU_Hand2 = InitPlayerDeck(15);
+		players[2] = new Player("Player 3", CPU_Hand2, 0, "CPU_Two_Hand", "total2", stomach2);
+	}
+
+	if(players[2] != undefined){
+		CPU_Hand3 = InitPlayerDeck(0);
+		players[3] = new Player("Player 4", CPU_Hand3, 0, "CPU_Three_Hand", "total3", stomach3);
+	}
+
 
 	InsertWitches();
 
@@ -190,31 +200,25 @@ function largestWeight(){
 	var weight, weight2, weight3, weight4;
 
 	if(players[0] != undefined){ weight = players[0].weight; }
-	else { weight = -1; }
+
 	if(players[1] != undefined){ weight2 = players[1].weight; }
-	else { weight = -1; }
+
 	if(players[2] != undefined){ weight3 = players[2].weight; }
-	else { weight = -1; }
+
 	if(players[3] != undefined){ weight4 = players[3].weight; }
-	else { weight = -1; }
+
 
 	var retVal = new Array(0);
-	var max = Math.max(weight, weight2, weight3, weight4);
-	var min = Math.min(weight, weight2, weight3, weight4);
+	var max = Math.max(isNaN(weight) ? -Infinity : weight, isNaN(weight2) ? -Infinity : weight2, isNaN(weight3) ? -Infinity : weight3, isNaN(weight4) ? -Infinity : weight4);
+	var min = Math.min(isNaN(weight) ? Infinity : weight, isNaN(weight2) ? Infinity : weight2, isNaN(weight3) ? Infinity : weight3, isNaN(weight4) ? Infinity : weight4);
 
 	for(i = 0; i < players.length; i++){
 
 		if( players[i] != undefined && players[i].weight == max) { retVal.push(i); break; }
 	}
 	for(i = 0; i < players.length; i++){
-		if( players[i] != undefined && players[i].weight != max && players[i].weight > -1) { retVal.push(i); break; }
-		else { 
-			if(players[0] != undefined) retVal.push(0);
-			if(players[1] != undefined) retVal.push(1);
-			if(players[2] != undefined) retVal.push(2);
-			if(players[3] != undefined) retVal.push(3);
+		if( players[i] != undefined && players[i].weight == min) { retVal.push(i); break; }
 
-		}
 
 	}
 
@@ -545,6 +549,7 @@ function playerLost(player){
 
 	}
 	players[player] = null;
+	Deal();
 	//console.table(usedCards, "cardName");
 	//console.table(players[player].playerhand, "cardName");
 
