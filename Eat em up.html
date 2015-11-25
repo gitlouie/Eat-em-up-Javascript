@@ -5,7 +5,7 @@
 
 <title>Eat em up!</title>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="jquery-2.1.4.js"></script>
 <script >
 
 
@@ -199,27 +199,24 @@ function restartGame(){
 function largestWeight(){
 	var weight, weight2, weight3, weight4;
 
+	// Ensures the player has not been deallocated
 	if(players[0] != undefined){ weight = players[0].weight; }
-
 	if(players[1] != undefined){ weight2 = players[1].weight; }
-
 	if(players[2] != undefined){ weight3 = players[2].weight; }
-
 	if(players[3] != undefined){ weight4 = players[3].weight; }
 
 
 	var retVal = new Array(0);
+
+	// isNan is used to ensure that the number is not undefined
 	var max = Math.max(isNaN(weight) ? -Infinity : weight, isNaN(weight2) ? -Infinity : weight2, isNaN(weight3) ? -Infinity : weight3, isNaN(weight4) ? -Infinity : weight4);
 	var min = Math.min(isNaN(weight) ? Infinity : weight, isNaN(weight2) ? Infinity : weight2, isNaN(weight3) ? Infinity : weight3, isNaN(weight4) ? Infinity : weight4);
 
 	for(i = 0; i < players.length; i++){
-
 		if( players[i] != undefined && players[i].weight == max) { retVal.push(i); break; }
 	}
 	for(i = 0; i < players.length; i++){
 		if( players[i] != undefined && players[i].weight == min) { retVal.push(i); break; }
-
-
 	}
 
 	console.log("VALUES B4 out " + retVal[0] + "   " + retVal[1]);
@@ -278,7 +275,7 @@ function ChangeWeight2(player, card){
 	var weight = players[player].weight + card.weight;
 
 	if(weight < 0) 		 weight = 0;
-	else if(weight >= 25) playerLost(player);
+	else if(weight >= 25){ playerLost(player); return;}
 	
 	players[player].stomach.push(card); //incase the cards run out to reshuffle
 	players[player].weight = weight; //keep a copy of the weight
@@ -522,7 +519,7 @@ function ChangeWeight(player){
 	var weight = players[player].weight + tempCard.weight;
 
 	if(weight < 0) 		 weight = 0;
-	else if(weight >= 25) playerLost(player);
+	else if(weight >= 25){ playerLost(player); return;}
 	
 
 
