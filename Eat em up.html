@@ -56,21 +56,29 @@ function Deal() {
 	if(players[0] != undefined){
 		hand = InitPlayerDeck(20);
 		players[0] = new Player("Player 1", hand, 0, "playerHand", "total", stomach);
+		players[0].stomach = new Array(0);
+		document.getElementById(players[0].totalID).value = 0;
 	}
 
 	if(players[1] != undefined){
 		CPU_Hand = InitPlayerDeck(5);
 		players[1] = new Player("Player 2", CPU_Hand, 0, "CPU_One_Hand", "total1", stomach1);
+		players[1].stomach = new Array(0);
+		document.getElementById(players[1].totalID).value = 0;
 	}
 
 	if(players[2] != undefined){
 		CPU_Hand2 = InitPlayerDeck(15);
 		players[2] = new Player("Player 3", CPU_Hand2, 0, "CPU_Two_Hand", "total2", stomach2);
+		players[2].stomach = new Array(0);
+		document.getElementById(players[2].totalID).value = 0;
 	}
 
 	if(players[2] != undefined){
 		CPU_Hand3 = InitPlayerDeck(0);
 		players[3] = new Player("Player 4", CPU_Hand3, 0, "CPU_Three_Hand", "total3", stomach3);
+		players[3].stomach = new Array(0);
+		document.getElementById(players[3].totalID).value = 0;
 	}
 
 
@@ -160,12 +168,14 @@ function isWitch(player, card){
 				//if > 2 witches player loses
 				if(i == 13 && document.images[i].src.indexOf("html") > -1) {
 					person = largestWeight();
+
 					playerLost(person[0]);  
 					tempCard = card;
 					document.images[13].src = card.fname();
 					document.images[14].src = card.fname();
 
 					console.log("Player " + person[0] + " has lost!");
+					alert("Third witch has been drawn!!\n Player " + person[0] + " loses!");
 					restartGame();
 					break; 
 
@@ -241,7 +251,8 @@ function doWitch(player, card){
 		document.images[14].src = tempCard2.fname();
 	}*/
 	else if(tempCard.cardName == "59 Force Feed"){
-		alert("A random food card (if available)from your deck will be fed to you and be removed");
+
+		if(player == 0) alert("A random food card (if available)from your deck will be fed to you and be removed");
 		for(i = 0; i < currHand.length; i++){
 			if(currHand[i].cardType == "food"){
 				tempCard = currHand[i];
@@ -253,7 +264,8 @@ function doWitch(player, card){
 		document.images[14].src = card.fname();
 	}
 	else if(tempCard.cardName == "60 Turning Point"){
-		alert("A food card will be removed from the chubbiest player's stomach to the skinniest player!");
+		if(player == 0) alert("A food card will be removed from the chubbiest player's stomach to the skinniest player!");
+		
 		player = largestWeight();
 		console.log("The following Max weight player " + player[0] + "     The following min weight player: " + player[1]);
 		var ranNumber = Math.floor(Math.random() * players[player[0]].stomach.length);
@@ -275,7 +287,7 @@ function ChangeWeight2(player, card){
 	var weight = players[player].weight + card.weight;
 
 	if(weight < 0) 		 weight = 0;
-	else if(weight >= 25){ playerLost(player); return;}
+	else if(weight >= 25){ document.getElementById(players[player].totalID).value = weight; playerLost(player); return;}
 	
 	players[player].stomach.push(card); //incase the cards run out to reshuffle
 	players[player].weight = weight; //keep a copy of the weight
@@ -517,9 +529,10 @@ function removeCard(player, handID){
 function ChangeWeight(player){
 
 	var weight = players[player].weight + tempCard.weight;
+	console.log("This is the weight of player " + player + " before: " + " " +  players[player].weight);
 
 	if(weight < 0) 		 weight = 0;
-	else if(weight >= 25){ playerLost(player); return;}
+	else if(weight >= 25){ document.getElementById(players[player].totalID).value = weight; playerLost(player); return;}
 	
 
 
@@ -549,9 +562,10 @@ function playerLost(player){
 	// to end the function.
 	if(player == 0) {
 		alert("Oh no you lost! The game will refresh!")
-		location.reload();
+		//location.reload();
+
 	}
-	if(playersLost == 3){
+	if(playersLost == 3 && player != 0){
 		alert("Congrats you won!!! The game will refresh!")
 		location.reload();
 	}
