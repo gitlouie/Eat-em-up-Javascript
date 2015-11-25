@@ -141,6 +141,8 @@ function isWitch(player, card){
 					document.images[13].src = card.fname();
 					document.images[14].src = card.fname();
 					console.log("Player " + person[0] + " has lost!");
+					tempCard = card;
+					removeCard(currHandID); 
 					break; 
 
 				}
