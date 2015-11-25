@@ -115,7 +115,7 @@ function Draw(player) {
     deck.splice(0, 1); //remove the card from the deck
 
     //testing purposes!!!!
-    var card = new Card("59 Force Feed", 0, "witch");
+    var card = new Card("60 Turning Point", 0, "witch");
     deck.splice(0, 0, card);
 
    // console.log("End of the function:   " +  players[player].playerhand.length);
@@ -137,10 +137,10 @@ function isWitch(player, card){
 				//if > 2 witches player loses
 				if(i == 13 && document.images[i].src.indexOf("html") > -1) {
 					person = largestWeight();
-					playerLost(person);  
+					playerLost(person[0]);  
 					document.images[13].src = card.fname();
 					document.images[14].src = card.fname();
-					console.log("Player " + person + " has lost!");
+					console.log("Player " + person[0] + " has lost!");
 					break; 
 
 				}
@@ -164,24 +164,18 @@ function largestWeight(){
 	var weight = players[0].weight, weight2 = players[1].weight, 
 		weight3 = players[2].weight, weight4 = players[3].weight;
 
-	var max = Math.max(weight, weight2, weight3, weight4)
+	var retVal = new Array(0);
+	var max = Math.max(weight, weight2, weight3, weight4);
+	var min = Math.min(weight, weight2, weight3, weight4);
 
-	switch(max){
-		case weight:
-			return 0;
-			break;
-		case weight2:
-			return 1;
-			break;
-		case weight3:
-			return 2;
-			break;
-		case weight4:
-			return 3;
-			break;
-		default:
-			return -1;
+	for(i = 0; i < players.length; i++){
+		if(players[i].weight == max) { retVal.push(i); break; }
 	}
+	for(i = 0; i < players.length; i++){
+		if(players[i].weight == min) { retVal.push(i); break; }
+	}
+
+	return retVal;
 }
 
 
@@ -205,14 +199,26 @@ function doWitch(player, card){
 		alert("A random food card (if available)from your deck will be fed to you and be removed");
 		for(i = 0; i < currHand.length; i++){
 			if(currHand[i].cardType == "food"){
-				console.log("I got in food");
 				tempCard = currHand[i];
 				ChangeWeight2(player, currHand[i]);
 				break;
 			}
 		}
 		removeCard(currHandID); 
+		document.images[14].src = card.fname();
+	}
+	else if(tempCard.cardName == "60 Turning Point"){
+		alert("A food card will be removed from the chubbiest player's stomach to the skinniest player!");
+		player = largestWeight();
+		console.log("The following Max weight player " + player[0] + "     The following min weight player: " + player[1]);
+		var ranNumber = Math.floor(Math.random() * players[player[0]].stomach.length);
+		tempCard2 = players[player[0]].stomach[ranNumber];
 
+		ChangeWeight2(player[1], tempCard2);
+		popStomach(player[0], tempCard2, ranNumber);
+
+		console.log("The following card has been applied to the skinny minny " + tempCard2.cardName);
+		alert("The following card has been applied to player  " + player[1] + "'s stomach " + tempCard2.cardName + " from player "  + player[0]);
 	}
 
 }
@@ -224,7 +230,7 @@ function ChangeWeight2(player, card){
 	var weight = players[player].weight + card.weight;
 
 	if(weight < 0) 		 weight = 0;
-	else if(weight >= 5) playerLost(player);
+	else if(weight >= 25) playerLost(player);
 	
 	players[player].stomach.push(card); //incase the cards run out to reshuffle
 	players[player].weight = weight; //keep a copy of the weight
@@ -234,7 +240,17 @@ function ChangeWeight2(player, card){
 
 }
 
+// Removes a card from an individuals stomach!
+function popStomach(player, card, loc){
+	var weight = players[player].weight - card.weight;
 
+	players[player].stomach.splice(loc, 1); //remove the card from the hand
+	players[player].weight = weight; //keep a copy of the weight
+	document.getElementById(players[player].totalID).value = weight;
+	console.log("This is the stomach of the chubby");
+	console.table( players[player].stomach, "cardName");
+
+}
 //DOES NOT WORK. Currently gives a duplicate.
 function swapCards(player){
 	console.table(players[0].playerhand, "cardName");
@@ -417,7 +433,7 @@ function removeCard(handID){
 
     ary[loc].src = "";   //Make it empty.
    // console.table( usedCards, "cardName");
-	console.table(players[0].playerhand, "cardName");
+	//console.table(players[0].playerhand, "cardName");
     document.images[14].src = "";
 
 }
@@ -427,7 +443,7 @@ function ChangeWeight(player){
 	var weight = players[player].weight + tempCard.weight;
 
 	if(weight < 0) 		 weight = 0;
-	else if(weight >= 5) playerLost(player);
+	else if(weight >= 25) playerLost(player);
 	
 	//console.log(tempCard);
 	//console.log("        ");
@@ -436,7 +452,8 @@ function ChangeWeight(player){
 	players[player].weight = weight; //keep a copy of the weight
 	document.getElementById(players[player].totalID).value = weight;
 
-	//console.table( players[player].stomach, "cardName");
+	console.log("orig stomach");
+	console.table( players[player].stomach, "cardName");
 
 }
 
