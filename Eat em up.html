@@ -36,9 +36,9 @@ var foodNames = ["0 Apple Bacon Pie", 6,"1 Bacon Gingerbread", 8,"2 Bacon Ice Cr
 var potNames = ["39 Bird Stomach", -1,"40 Sour Tooth", -5,"41 North Forest Diet", -3,"42 Pebble Trails", -3,
 			    "43 Vanilla Man", -4,"44 Vegetarian", -2]
 
-var spellNames = ["45 Bone Trick", 0,"46 Boy's Best Friend", 0,"47 Diet Worm", 0,
-			"48 Father's Axe", 0,"49 For the Birds", 0,"50 Seconds", 0,"53 Step Mom", 0,"54 Truffle Shuffle", 0,
-			"55 Weigh", 0]
+var spellNames = ["45 Bone Trick", 0,"46 Boy's Best Friend", 0,"48 Father's Axe", 0,
+				 "49 For the Birds", 0,"50 Seconds", 0,"50 Seconds", 0,"50 Seconds", 0,
+				 "53 Step Mom", 0,"55 Weigh", 0]
 
 var witchNames = ["57 Captured", 0,"58 Contra Band", 0,"59 Force Feed", 0,
 			      "60 Turning Point", 0,"61 Nothing", 0,"62 Nothing", 0]
@@ -148,15 +148,6 @@ function Draw(player) {
     if(player == 0 && pOneDrewWitch < 1){ compTurn(); }
     else pOneDrewWitch = 0;
 
-    //testing purposes!!!!
-    if (player == 0){
-    	var card = new Card("60 Turning Point", 0, "witch");
-	    deck.splice(0, 0, card);
-	    var card = new Card("53 Step Mom", 0, "spell");
-	    deck.splice(0, 0, card);
-
-
-	}
    // console.log("End of the function:   " +  players[player].playerhand.length);
      console.table(deck, "cardName");
      console.table(players, "weight");
@@ -323,7 +314,7 @@ function doSpell(player, card){
 		//removeCard(player, currHandID); 
 		console.table(deck, "cardName");
 	}
-	else if(tempCard.cardName == "46 Boy's Best Friend"){
+	else if(tempCard.cardName == "46 Boy's Best Friend" || tempCard.cardName == "55 Weigh"){
 		if(player != 0){ alert("A food card will be removed from player" + player + "'s stomach!");}
 
 		ranNumber = Math.floor(Math.random() * players[player].stomach.length);
@@ -333,7 +324,7 @@ function doSpell(player, card){
 
 	}
 	else if(tempCard.cardName == "48 Father's Axe"){
-		alert("All Witch cards will be removed from the playfield into the deck.");
+		alert("All Witch cards will be removed from the playfield into the deck. (if any)");
 
 		var xy = 0;
 		//if witch is displayed empty it out (start from the right to left)
@@ -359,10 +350,11 @@ function doSpell(player, card){
 		ranNumber = Math.floor(Math.random() * players[player].stomach.length);
 		
 		tempCard2 = players[player].stomach[ranNumber];
-		ChangeWeight2(player, tempCard2);
+		if(tempCard2 != undefined) { ChangeWeight2(player, tempCard2); }
+		else { alert("Too bad it was empty!"); }
 	}
 	else if(tempCard.cardName == "53 Step Mom"){
-		alert("The Step Mom card was played which means a food from player" + player + "'s stomach will be doubled!");
+		alert("The Step Mom card was played against player" + player + "which means they will eat one of their own food cards!");
 		for(i = 0; i < currHand.length; i++){
 			if(currHand[i].cardType == "food"){
 				tempCard = currHand[i];
