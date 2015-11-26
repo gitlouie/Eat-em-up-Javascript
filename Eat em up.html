@@ -74,7 +74,7 @@ function Deal() {
 		document.getElementById(players[2].totalID).value = 0;
 	}
 
-	if(players[2] != undefined){
+	if(players[3] != undefined){
 		CPU_Hand3 = InitPlayerDeck(0);
 		players[3] = new Player("Player 4", CPU_Hand3, 0, "CPU_Three_Hand", "total3", stomach3);
 		players[3].stomach = new Array(0);
@@ -116,7 +116,7 @@ function Draw(player) {
 	
 	// If all cards have been depleted use the cards already used.
 	if(deck.length == 0) { 
-		alert("REINIT"); 
+		alert("The deck ran out of cards! It will reinitalize it with all the cards played. (Minus the witches)"); 
 		deck = usedCards; 
 		usedCards = new Array(0); 
 	}
@@ -137,6 +137,7 @@ function Draw(player) {
 	}
 	tempCard2 = deck[0];
 
+	//alert("Player " + player + " just drew " + deck[0].cardName);
     console.log("Player " + player + " just drew " + deck[0].cardName);
     deck.splice(0, 1); //remove the card from the deck
     isWitch(player, tempCard2);
@@ -187,6 +188,7 @@ function isWitch(player, card){
 					tempCard2 = card;
 					removeCard(player, currHandID); 
 					document.images[14].src = card.fname();
+					alert("A witch has been drawn!!\n Player " + player + " drew the following witch card:\n" + card.cardName);					
 					doWitch(player, card);
 					Draw(player);
 					break;
@@ -197,6 +199,7 @@ function isWitch(player, card){
 	}	
 }
 
+// A player lost and now the game needs to restart
 function restartGame(){
 	for(i = 11; i < 14; i++){
 		document.images[i].src = ""; // reset the witch card images
@@ -206,6 +209,7 @@ function restartGame(){
 	
 }
 
+// Returns the largest and smallest weights
 function largestWeight(){
 	var weight, weight2, weight3, weight4;
 
@@ -251,7 +255,7 @@ function doWitch(player, card){
 		document.images[14].src = tempCard2.fname();
 	}*/
 	else if(tempCard.cardName == "59 Force Feed"){
-
+		alert("A food card will be played on the player who drew this card from their own deck");
 		if(player == 0) alert("A random food card (if available)from your deck will be fed to you and be removed");
 		for(i = 0; i < currHand.length; i++){
 			if(currHand[i].cardType == "food"){
@@ -264,9 +268,10 @@ function doWitch(player, card){
 		document.images[14].src = card.fname();
 	}
 	else if(tempCard.cardName == "60 Turning Point"){
-		if(player == 0) alert("A food card will be removed from the chubbiest player's stomach to the skinniest player!");
-		
+
 		player = largestWeight();
+		alert("A food card will be removed from the chubbiest player's stomach (" + player[0] + ") to the skinniest player! (" + player[1] + ")");
+		
 		console.log("The following Max weight player " + player[0] + "     The following min weight player: " + player[1]);
 		var ranNumber = Math.floor(Math.random() * players[player[0]].stomach.length);
 		tempCard2 = players[player[0]].stomach[ranNumber];
@@ -355,6 +360,7 @@ function replaceImage(ind, currHand){
 function fname() {
    return "Card Images/" + this.cardName + ".jpg";
 }
+
 // Constructor for Card objects
 function Card(cardName, weight, cardType) {
    this.cardName = cardName;
@@ -375,11 +381,14 @@ function Player(playerName, playerhand, weight, handID, totalID, stomach) {
 }
 
 
+// Determines if the cards have been dealt.
+// If they have you can now draw by clicking on the deck.
 function DealDraw() {
    if (dealt == true) Draw(0);
    else Deal();
 }
 
+// Create the deck based on Food, Potion, and Spell Cards.
 function CreateDeck(){
 
 	x = 0;// to index the names array
@@ -420,9 +429,9 @@ function InsertWitches(){
 
 }
 
+// shuffle the deck
 function ShuffleDeck(){
 
-	// shuffle the deck
    var n = Math.floor(400 * Math.random() + 500);
    for (i=0; i<n; i++) {
       card1 = Math.floor(deck.length * Math.random());
@@ -435,31 +444,42 @@ function ShuffleDeck(){
 
 }
 
+// Plays the card for the AI
 function playCard(user){
+	var addOrSub = "+";
 	var currHand = players[user].playerhand;
-	console.table(currHand, "cardName");
 	var ranNumber = Math.floor(Math.random() * currHand.length);
 	var pWeights = new Array(0);
 
+	console.table(currHand, "cardName");
+
+	// Set the card which the AI will play.
 	tempCard = currHand[ranNumber];
 	removeCard(user, players[user].handID);
 
 	pWeights = largestWeight();
 
+	// Grabs the largest and smallest weights
 	if(pWeights[0] == pWeights[1]) { pWeights[1] = 0; }
 	if(pWeights[1] == user) { pWeights[1] = pWeights[0]; }
 	
-	if(tempCard.cardType == "potion") pWeights[user];
-	
+	// If potion card use on yourself.
+	if(tempCard.cardType == "potion") { pWeights[1] = user; addOrSub = ""}
+
 	console.log("player " + user + " will play " + tempCard.cardName + "  on player " + pWeights[1]);
+	alert("player" + user + " played " + tempCard.cardName.replace(/[0-9]/g, '') + " on player" + pWeights[1] + " (" + addOrSub + tempCard.weight +" weight)");
+	
 	// Change the weight of the chubbiest one
 	ChangeWeight(pWeights[1]); 
 
 	Draw(user); //draw a new card
+	
 
 }
 
+// Plays the turn for the AI's who are still in the game.
 function compTurn(){
+	//Check to make sure the player is still active.
 	if(players[1] != undefined) playCard(1);
 	if(players[2] != undefined) playCard(2);
 	if(players[3] != undefined) playCard(3);
@@ -482,28 +502,27 @@ function Display(pos){
     	newName = hand[i].cardName.replace(/[0-9]/g, '').replace(/\s/g, '');
 
 		if(text.indexOf(newName) > -1) loc = i;
-
-
     }
 
 	tempCard = hand[loc];
+
+	// Checks to see if the card displayed is a potion
+	// If it is a potion the user is allowed to use it
+	// on themselves.
 	if(hand[loc].cardType = "potion") isPotion = 1;
 	else isPotion = 0;
-	//console.log(tempCard);
+
 	position = loc;
 }
 
 function DisplayOptions(){
 	
-	//var person = prompt("Please enter the player", "1");
-	//alert("Select a player by clicking on them");
 	whichPlayer();
-	//ChangeWeight(person);
-	
-	//displayCardWeights();
+
 
 }
 
+// Removes a card from the player's hand and from the screen.
 function removeCard(player, handID){
 	//if (hand[5] != null) return; //makes sure you do not go over 6 cards
 
@@ -513,32 +532,39 @@ function removeCard(player, handID){
 
 	var ary = tc ? tc.getElementsByTagName("img") : [];
 	var loc = ary.length - 1;
-	//alert(newName + "      " + sCard);
+
 	for(i = 0; i < ary.length; i++){
 		
 		newName = ary[i].src.replace(/[0-9]/g, '').replace(/%/g, '');
 		
 		if(newName.indexOf(sCard) > -1) loc = i;
 	}
-	usedCards.push(players[player].playerhand[loc]); //incase the cards run out to reshuffle
+
+	// Incase the cards run out to be reshuffled
+	// Do not want to replay witch cards
+	if(players[player].playerhand[loc].cardType != "witch"){
+		usedCards.push(players[player].playerhand[loc]); 
+	}
+
 	players[player].playerhand.splice(loc, 1); //remove the card from the hand
 
-    ary[loc].src = "";   //Make it empty.
-   // console.table( usedCards, "cardName");
-	//console.table(players[0].playerhand, "cardName");
-    document.images[14].src = "";
+    ary[loc].src = "";   // Clear the image.
+
+    document.images[14].src = ""; //Clear the display image.
 
 }
 
+// Change weight of a specified player
 function ChangeWeight(player){
 
 	var weight = players[player].weight + tempCard.weight;
 	console.log("This is the weight of player " + player + " before: " + " " +  players[player].weight);
 
+	// Check for negative values and goign above 25 (player loses > 25)
 	if(weight < 0) 		 weight = 0;
 	else if(weight >= 25){ document.getElementById(players[player].totalID).value = weight; playerLost(player); return;}
 	
-
+	// If a potion is used, it will not be pushed to the stomach.
 	if(tempCard.cardType != "potion")
 		players[player].stomach.push(tempCard); //incase the cards run out to reshuffle
 	
@@ -567,7 +593,7 @@ function playerLost(player){
 	// to end the function.
 	if(player == 0) {
 		alert("Oh no you lost! The game will refresh!")
-		//location.reload();
+		location.reload();
 
 	}
 	if(playersLost == 3 && player != 0){
@@ -577,9 +603,10 @@ function playerLost(player){
 
 
 	players[player] = null;
+
+	// Reinitalize the deck and the players (i.e hand, weight, etc.)
+	alert("The cards will now be reshuffled and weights will be back to 0");
 	Deal();
-	//console.table(usedCards, "cardName");
-	//console.table(players[player].playerhand, "cardName");
 
 }
 
@@ -593,6 +620,7 @@ function displayCardWeights(){
 	}
 }
 
+// Grabs the data from the player's hand once the window loads.
 $(window).load(function(){ 
 	 player0 = document.getElementById("pot");
 	 player1 = document.getElementById("CPU_One_Hand");
@@ -602,6 +630,7 @@ $(window).load(function(){
 })
 
 // Turns on a clickable state to select the person to use the card on.
+// Removes the clickable state once its done.
 function whichPlayer(){
 	if(isPotion > 0){ 
 		$(player0).on('click', function(){  $(player0).off('click'); $(player1).off('click'); $(player2).off('click');  $(player3).off('click'); ChangeWeight(0); removeCard(0, "playerHand");  });
