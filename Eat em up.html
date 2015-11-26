@@ -10,7 +10,7 @@
 
 
 
-var score = 0, lastWeight, isPotion = 0;
+var score = 0, lastWeight = 0, isPotion = 0, pOneDrewWitch = 0;
 var tempCard, tempCard2;
 var dealt = false;
 var hand = new Array(5), CPU_Hand = new Array(5), CPU_Hand2 = new Array(5), CPU_Hand3 = new Array(5);
@@ -20,7 +20,7 @@ var deck = new Array(53);
 
 var player1 = 0, player2 = 0, player3 = 0, playersLost = 0;
 
-var position = -1;
+var position = -1, player = 0;
 
 var players =  ["", "","",""];
 
@@ -140,18 +140,26 @@ function Draw(player) {
 	//alert("Player " + player + " just drew " + deck[0].cardName);
     console.log("Player " + player + " just drew " + deck[0].cardName);
     deck.splice(0, 1); //remove the card from the deck
+    
     isWitch(player, tempCard2);
 
     deck.splice(0, 1); //remove the card from the deck
 
-    if(player == 0){ compTurn(); }
+    if(player == 0 && pOneDrewWitch != 1){ compTurn(); }
+    else pOneDrewWitch = 0;
+
     //testing purposes!!!!
-   // var card = new Card("60 Turning Point", 0, "witch");
-   // deck.splice(0, 0, card);
+    if (player == 0){
+    	var card = new Card("60 Turning Point", 0, "witch");
+	    deck.splice(0, 0, card);
+	    //var card = new Card("45 Bone Trick", 0, "spell");
+	   // deck.splice(0, 0, card);
 
+
+	}
    // console.log("End of the function:   " +  players[player].playerhand.length);
-   //  console.table(deck, "cardName");
-
+     console.table(deck, "cardName");
+     console.table(players, "weight");
 }
 
 // Check to see if the drawn card is a witch
@@ -159,6 +167,8 @@ function Draw(player) {
 function isWitch(player, card){
 	var currHand = players[player].playerhand;
 	var currHandID = players[player].handID;
+
+	if(player == 0) { pOneDrewWitch = 1; }
 
 	for(i = 0; i < currHand.length; i++){
 		if(currHand[i].cardType == "witch"){
@@ -198,6 +208,9 @@ function isWitch(player, card){
 		}
 	}	
 }
+
+
+
 
 // A player lost and now the game needs to restart
 function restartGame(){
@@ -274,8 +287,9 @@ function doWitch(player, card){
 		
 		console.log("The following Max weight player " + player[0] + "     The following min weight player: " + player[1]);
 		var ranNumber = Math.floor(Math.random() * players[player[0]].stomach.length);
-		tempCard2 = players[player[0]].stomach[ranNumber];
-
+		
+		tempCard2 = players[player[0]].stomach[0];
+		alert(tempCard2);
 		ChangeWeight2(player[1], tempCard2);
 		popStomach(player[0], tempCard2, ranNumber);
 
@@ -286,10 +300,40 @@ function doWitch(player, card){
 }
 
 
+function doSpell(player, card){
+	console.log("I got into dospell");
+	var currHand = players[player].playerhand;
+	var currHandID = players[player].handID;
+	var ranNumber = Math.floor(Math.random() * deck.length);
+	console.log("I got into dospell and variables");
+	if(tempCard.cardName == "45 Bone Trick"){
+		console.log("got into bone trick");
+		alert("A Witch will be removed from the playfield into the deck.");
+
+		//if witch is displayed empty it out (start from the right to left)
+		for(i = 13; i > 10; i--) { 
+			if(document.images[i].src.indexOf("html") == -1) {
+				document.images[i].src = "";
+				break;
+			}
+		}
+		deck.push(tempCard);
+		//removeCard(player, currHandID); 
+		console.table(deck, "cardName");
+	}
+
+}
+
+
+
 function ChangeWeight2(player, card){
 
 	console.table( players[player].stomach, "cardType");
-	var weight = players[player].weight + card.weight;
+	var weight;
+
+	if(players[player].weight != undefined){ weight = players[player].weight + card.weight; }
+	else weight = card.weight;
+	console.table(players, "weight");
 
 	if(weight < 0) 		 weight = 0;
 	else if(weight >= 25){ document.getElementById(players[player].totalID).value = weight; playerLost(player); return;}
@@ -542,7 +586,7 @@ function removeCard(player, handID){
 
 	// Incase the cards run out to be reshuffled
 	// Do not want to replay witch cards
-	if(players[player].playerhand[loc].cardType != "witch"){
+	if(players[player] != undefined && players[player].playerhand[loc].cardType != "witch"){
 		usedCards.push(players[player].playerhand[loc]); 
 	}
 
@@ -557,6 +601,11 @@ function removeCard(player, handID){
 // Change weight of a specified player
 function ChangeWeight(player){
 
+	// if the card is a spell 
+	if(tempCard.cardType == "spell") { doSpell(player, temp); }
+
+
+
 	var weight = players[player].weight + tempCard.weight;
 	console.log("This is the weight of player " + player + " before: " + " " +  players[player].weight);
 
@@ -565,8 +614,7 @@ function ChangeWeight(player){
 	else if(weight >= 25){ document.getElementById(players[player].totalID).value = weight; playerLost(player); return;}
 	
 	// If a potion is used, it will not be pushed to the stomach.
-	if(tempCard.cardType != "potion")
-		players[player].stomach.push(tempCard); //incase the cards run out to reshuffle
+	players[player].stomach.push(tempCard); //incase the cards run out to reshuffle
 	
 	players[player].weight = weight; //keep a copy of the weight
 	document.getElementById(players[player].totalID).value = weight;
