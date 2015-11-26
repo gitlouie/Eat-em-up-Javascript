@@ -289,7 +289,7 @@ function doWitch(player, card){
 		var ranNumber = Math.floor(Math.random() * players[player[0]].stomach.length);
 		
 		tempCard2 = players[player[0]].stomach[0];
-		alert(tempCard2);
+
 		ChangeWeight2(player[1], tempCard2);
 		popStomach(player[0], tempCard2, ranNumber);
 
@@ -511,7 +511,7 @@ function playCard(user){
 	if(tempCard.cardType == "potion") { pWeights[1] = user; addOrSub = ""}
 
 	console.log("player " + user + " will play " + tempCard.cardName + "  on player " + pWeights[1]);
-	alert("player" + user + " played " + tempCard.cardName.replace(/[0-9]/g, '') + " on player" + pWeights[1] + " (" + addOrSub + tempCard.weight +" weight)");
+	alert("player" + user + " played " + tempCard.cardName.replace(/[0-9]/g, '') + " on player" + pWeights[1] + " ("  + tempCard.weight +" weight)");
 	
 	// Change the weight of the chubbiest one
 	ChangeWeight(pWeights[1]); 
@@ -553,7 +553,7 @@ function Display(pos){
 	// Checks to see if the card displayed is a potion
 	// If it is a potion the user is allowed to use it
 	// on themselves.
-	if(hand[loc].cardType = "potion") isPotion = 1;
+	if(hand[loc].cardType == "potion") isPotion = 1;
 	else isPotion = 0;
 
 	position = loc;
@@ -614,7 +614,10 @@ function ChangeWeight(player){
 	else if(weight >= 25){ document.getElementById(players[player].totalID).value = weight; playerLost(player); return;}
 	
 	// If a potion is used, it will not be pushed to the stomach.
-	players[player].stomach.push(tempCard); //incase the cards run out to reshuffle
+	console.log(tempCard.cardType + "   " + tempCard.cardName);
+
+	if(tempCard.cardType == "food"){ players[player].stomach.push(tempCard); } //incase the cards run out to reshuffle
+
 	
 	players[player].weight = weight; //keep a copy of the weight
 	document.getElementById(players[player].totalID).value = weight;
