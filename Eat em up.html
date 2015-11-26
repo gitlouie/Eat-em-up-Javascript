@@ -10,7 +10,7 @@
 
 
 
-var score = 0, lastWeight;
+var score = 0, lastWeight, isPotion = 0;
 var tempCard, tempCard2;
 var dealt = false;
 var hand = new Array(5), CPU_Hand = new Array(5), CPU_Hand2 = new Array(5), CPU_Hand3 = new Array(5);
@@ -169,13 +169,13 @@ function isWitch(player, card){
 				if(i == 13 && document.images[i].src.indexOf("html") > -1) {
 					person = largestWeight();
 
-					playerLost(person[0]);  
 					tempCard = card;
 					document.images[13].src = card.fname();
 					document.images[14].src = card.fname();
-
-					console.log("Player " + person[0] + " has lost!");
 					alert("Third witch has been drawn!!\n Player " + person[0] + " loses!");
+					playerLost(person[0]);  
+					console.log("Player " + person[0] + " has lost!");
+
 					restartGame();
 					break; 
 
@@ -449,6 +449,8 @@ function playCard(user){
 	if(pWeights[0] == pWeights[1]) { pWeights[1] = 0; }
 	if(pWeights[1] == user) { pWeights[1] = pWeights[0]; }
 	
+	if(tempCard.cardType == "potion") pWeights[user];
+	
 	console.log("player " + user + " will play " + tempCard.cardName + "  on player " + pWeights[1]);
 	// Change the weight of the chubbiest one
 	ChangeWeight(pWeights[1]); 
@@ -485,6 +487,8 @@ function Display(pos){
     }
 
 	tempCard = hand[loc];
+	if(hand[loc].cardType = "potion") isPotion = 1;
+	else isPotion = 0;
 	//console.log(tempCard);
 	position = loc;
 }
@@ -535,8 +539,9 @@ function ChangeWeight(player){
 	else if(weight >= 25){ document.getElementById(players[player].totalID).value = weight; playerLost(player); return;}
 	
 
-
-	players[player].stomach.push(tempCard); //incase the cards run out to reshuffle
+	if(tempCard.cardType != "potion")
+		players[player].stomach.push(tempCard); //incase the cards run out to reshuffle
+	
 	players[player].weight = weight; //keep a copy of the weight
 	document.getElementById(players[player].totalID).value = weight;
 
@@ -589,6 +594,7 @@ function displayCardWeights(){
 }
 
 $(window).load(function(){ 
+	 player0 = document.getElementById("pot");
 	 player1 = document.getElementById("CPU_One_Hand");
 	 player2 = document.getElementById("CPU_Two_Hand");
 	 player3 = document.getElementById("CPU_Three_Hand");
@@ -597,6 +603,9 @@ $(window).load(function(){
 
 // Turns on a clickable state to select the person to use the card on.
 function whichPlayer(){
+	if(isPotion > 0){ 
+		$(player0).on('click', function(){  $(player0).off('click'); $(player1).off('click'); $(player2).off('click');  $(player3).off('click'); ChangeWeight(0); removeCard(0, "playerHand");  });
+	}
 	$(player1).on('click', function(){   $(player1).off('click'); $(player2).off('click');  $(player3).off('click'); ChangeWeight(1); removeCard(0, "playerHand");  });
 	$(player2).on('click', function(){   $(player1).off('click'); $(player2).off('click');  $(player3).off('click'); ChangeWeight(2); removeCard(0, "playerHand");  });
 	$(player3).on('click', function(){   $(player1).off('click'); $(player2).off('click');  $(player3).off('click'); ChangeWeight(3); removeCard(0, "playerHand");  });
@@ -727,7 +736,7 @@ function whichPlayer(){
 				</tr>
 
 				<tr>
-				  <td style="color:white"> <font size="6"><B>Weight:</B></font>
+				  <td id = "pot" style="color:white"> <font size="6"><B>Weight:</B></font>
 				       <input TYPE="TEXT" SIZE=1 NAME="total" id = "total" VALUE="0"></td>
 				  <td colspan=2  style="color:white">  <font size="6"><B>Current Hand:</B></font>
 
