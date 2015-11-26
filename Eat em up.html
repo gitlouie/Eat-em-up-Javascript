@@ -145,15 +145,15 @@ function Draw(player) {
 
     deck.splice(0, 1); //remove the card from the deck
 
-    if(player == 0 && pOneDrewWitch != 1){ compTurn(); }
+    if(player == 0 && pOneDrewWitch < 1){ compTurn(); }
     else pOneDrewWitch = 0;
 
     //testing purposes!!!!
     if (player == 0){
     	var card = new Card("60 Turning Point", 0, "witch");
 	    deck.splice(0, 0, card);
-	    //var card = new Card("45 Bone Trick", 0, "spell");
-	   // deck.splice(0, 0, card);
+	    var card = new Card("45 Bone Trick", 0, "spell");
+	    deck.splice(0, 0, card);
 
 
 	}
@@ -167,8 +167,6 @@ function Draw(player) {
 function isWitch(player, card){
 	var currHand = players[player].playerhand;
 	var currHandID = players[player].handID;
-
-	if(player == 0) { pOneDrewWitch = 1; }
 
 	for(i = 0; i < currHand.length; i++){
 		if(currHand[i].cardType == "witch"){
@@ -201,6 +199,8 @@ function isWitch(player, card){
 					alert("A witch has been drawn!!\n Player " + player + " drew the following witch card:\n" + card.cardName);					
 					doWitch(player, card);
 					Draw(player);
+					
+					if(player == 0) { pOneDrewWitch = 1; }
 					break;
 				}
 			}
