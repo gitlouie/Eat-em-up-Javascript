@@ -10,12 +10,12 @@
 
 
 
-var score = 0, lastWeight = 0, isPotion = 0, pOneDrewWitch = 0;
+var score = 0, lastWeight = 0, isPotion = 0, isSpell = 0, pOneDrewWitch = 0;
 var tempCard, tempCard2;
 var dealt = false;
 var hand = new Array(5), CPU_Hand = new Array(5), CPU_Hand2 = new Array(5), CPU_Hand3 = new Array(5);
 var stomach = new Array(0), stomach1 = new Array(0), stomach2 = new Array(0), stomach3 = new Array(0);
-var usedCards = new Array(0);
+var usedCards = new Array(0), playedWitches = new Array(0);
 var deck = new Array(53);
 
 var player1 = 0, player2 = 0, player3 = 0, playersLost = 0;
@@ -152,7 +152,7 @@ function Draw(player) {
     if (player == 0){
     	var card = new Card("60 Turning Point", 0, "witch");
 	    deck.splice(0, 0, card);
-	    var card = new Card("45 Bone Trick", 0, "spell");
+	    var card = new Card("50 Seconds", 0, "spell");
 	    deck.splice(0, 0, card);
 
 
@@ -192,6 +192,7 @@ function isWitch(player, card){
 
 				else if(document.images[i].src.indexOf("html") > -1 ) {
 					document.images[i].src = card.fname();
+					playedWitches.push(card);
 					tempCard = card;
 					tempCard2 = card;
 					removeCard(player, currHandID); 
@@ -199,8 +200,8 @@ function isWitch(player, card){
 					alert("A witch has been drawn!!\n Player " + player + " drew the following witch card:\n" + card.cardName);					
 					doWitch(player, card);
 					Draw(player);
-					
-					if(player == 0) { pOneDrewWitch = 1; }
+
+					if(player == 0) { pOneDrewWitch = 1; } 
 					break;
 				}
 			}
@@ -288,7 +289,7 @@ function doWitch(player, card){
 		console.log("The following Max weight player " + player[0] + "     The following min weight player: " + player[1]);
 		var ranNumber = Math.floor(Math.random() * players[player[0]].stomach.length);
 		
-		tempCard2 = players[player[0]].stomach[0];
+		tempCard2 = players[player[0]].stomach[ranNumber];
 
 		ChangeWeight2(player[1], tempCard2);
 		popStomach(player[0], tempCard2, ranNumber);
@@ -301,13 +302,13 @@ function doWitch(player, card){
 
 
 function doSpell(player, card){
-	console.log("I got into dospell");
+
 	var currHand = players[player].playerhand;
 	var currHandID = players[player].handID;
 	var ranNumber = Math.floor(Math.random() * deck.length);
-	console.log("I got into dospell and variables");
+
+
 	if(tempCard.cardName == "45 Bone Trick"){
-		console.log("got into bone trick");
 		alert("A Witch will be removed from the playfield into the deck.");
 
 		//if witch is displayed empty it out (start from the right to left)
@@ -317,9 +318,48 @@ function doSpell(player, card){
 				break;
 			}
 		}
-		deck.push(tempCard);
+		deck.push(playedWitches[ playedWitches.length - 1]);
+		ShuffleDeck();
 		//removeCard(player, currHandID); 
 		console.table(deck, "cardName");
+	}
+	else if(tempCard.cardName == "46 Boy's Best Friend"){
+		if(player != 0){ alert("A food card will be removed from player" + player + "'s stomach!");}
+
+		ranNumber = Math.floor(Math.random() * players[player].stomach.length);
+		
+		tempCard2 = players[player].stomach[ranNumber];
+		if(tempCard2 != undefined) { popStomach(player, tempCard2, ranNumber); }
+
+	}
+	else if(tempCard.cardName == "48 Father's Axe"){
+		alert("All Witch cards will be removed from the playfield into the deck.");
+
+		var xy = 0;
+		//if witch is displayed empty it out (start from the right to left)
+		for(i = 13; i > 10; i--) { 
+			if(document.images[i].src.indexOf("html") == -1) {
+				document.images[i].src = "";
+				deck.push(playedWitches[xy]);
+				xy++;
+			}
+		}
+		ShuffleDeck();
+	}
+	/* not implemented
+	else if(tempCard.cardName == "49 For the Birds"){
+		if(player != 0){ alert("A food card will be placed into another person's stomach due to the card For the Birds")}
+		ranNumber = Math.floor(Math.random() * players[player].stomach.length);
+		
+		tempCard2 = players[player].stomach[ranNumber];
+		if(tempCard2 != undefined) { popStomach(player, tempCard2, ranNumber); }
+	}*/
+	else if(tempCard.cardName == "50 Seconds"){
+		alert("A food card will be doubled from player" + player + "'s stomach!");
+		ranNumber = Math.floor(Math.random() * players[player].stomach.length);
+		
+		tempCard2 = players[player].stomach[ranNumber];
+		ChangeWeight2(player, tempCard2);
 	}
 
 }
@@ -350,6 +390,7 @@ function ChangeWeight2(player, card){
 function popStomach(player, card, loc){
 	var weight = players[player].weight - card.weight;
 
+	console.table( players[player].stomach, "cardName");
 	players[player].stomach.splice(loc, 1); //remove the card from the hand
 	players[player].weight = weight; //keep a copy of the weight
 	document.getElementById(players[player].totalID).value = weight;
@@ -510,9 +551,10 @@ function playCard(user){
 	// If potion card use on yourself.
 	if(tempCard.cardType == "potion") { pWeights[1] = user; addOrSub = ""}
 
-	console.log("player " + user + " will play " + tempCard.cardName + "  on player " + pWeights[1]);
-	alert("player" + user + " played " + tempCard.cardName.replace(/[0-9]/g, '') + " on player" + pWeights[1] + " ("  + tempCard.weight +" weight)");
-	
+	if(tempCard.cardType != "spell"){
+		console.log("player " + user + " will play " + tempCard.cardName + "  on player " + pWeights[1]);
+		alert("player" + user + " played " + tempCard.cardName.replace(/[0-9]/g, '') + " on player" + pWeights[1] + " ("  + tempCard.weight +" weight)");
+	}
 	// Change the weight of the chubbiest one
 	ChangeWeight(pWeights[1]); 
 
@@ -556,6 +598,9 @@ function Display(pos){
 	if(hand[loc].cardType == "potion") isPotion = 1;
 	else isPotion = 0;
 
+	if(hand[loc].cardType == "spell") isSpell = 1;
+	else isSpell = 0;
+
 	position = loc;
 }
 
@@ -586,7 +631,7 @@ function removeCard(player, handID){
 
 	// Incase the cards run out to be reshuffled
 	// Do not want to replay witch cards
-	if(players[player] != undefined && players[player].playerhand[loc].cardType != "witch"){
+	if(players[player].playerhand[loc] != undefined && players[player].playerhand[loc].cardType != "witch"){
 		usedCards.push(players[player].playerhand[loc]); 
 	}
 
@@ -683,7 +728,7 @@ $(window).load(function(){
 // Turns on a clickable state to select the person to use the card on.
 // Removes the clickable state once its done.
 function whichPlayer(){
-	if(isPotion > 0){ 
+	if(isPotion > 0 || isSpell > 0){ 
 		$(player0).on('click', function(){  $(player0).off('click'); $(player1).off('click'); $(player2).off('click');  $(player3).off('click'); ChangeWeight(0); removeCard(0, "playerHand");  });
 	}
 	$(player1).on('click', function(){   $(player1).off('click'); $(player2).off('click');  $(player3).off('click'); ChangeWeight(1); removeCard(0, "playerHand");  });
