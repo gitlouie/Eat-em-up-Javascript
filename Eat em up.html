@@ -152,7 +152,7 @@ function Draw(player) {
     if (player == 0){
     	var card = new Card("60 Turning Point", 0, "witch");
 	    deck.splice(0, 0, card);
-	    var card = new Card("50 Seconds", 0, "spell");
+	    var card = new Card("53 Step Mom", 0, "spell");
 	    deck.splice(0, 0, card);
 
 
@@ -360,6 +360,17 @@ function doSpell(player, card){
 		
 		tempCard2 = players[player].stomach[ranNumber];
 		ChangeWeight2(player, tempCard2);
+	}
+	else if(tempCard.cardName == "53 Step Mom"){
+		alert("The Step Mom card was played which means a food from player" + player + "'s stomach will be doubled!");
+		for(i = 0; i < currHand.length; i++){
+			if(currHand[i].cardType == "food"){
+				tempCard = currHand[i];
+				ChangeWeight2(player, currHand[i]);
+				break;
+			}
+		}
+		removeCard(player, currHandID); 
 	}
 
 }
